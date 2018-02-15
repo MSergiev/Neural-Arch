@@ -3,13 +3,13 @@
 
 #include <cstring>
 
-typedef short bitset;
-
-void add( bitset& in, bool val) { in = (in<<1)|val; }
-bitset get( bitset& in, unsigned char idx ) { return (((1<<idx)&in)>>idx); }
-
 // Instruction length
-#define ARCH 16
+#define ARCH 8
+
+typedef int bitset;
+
+void add( bitset& in, bool val, unsigned char input = 0 ) { in = (in<<(input+1))|val; }
+bool get( bitset& in, unsigned char idx ) { return (((1<<idx)&in)>>idx); }
 
 class Gate {
 
@@ -48,7 +48,7 @@ public:
         delete[] OUT_PINOUT;
     }
     
-	// Input num
+	// Gate ID
 	inline char* GateID() const { return ID; }
 	
 	// Input num

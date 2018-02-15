@@ -8,6 +8,7 @@
 #include "DMUX.h"
 #include "HA.h"
 #include "FA.h"
+#include "OR8WAY.h"
 
 
 void bin( bitset in, unsigned char size ) {
@@ -32,12 +33,13 @@ void test( Gate* g ) {
     }
     std::cout << std::endl;
     
-    unsigned char comb = std::pow(2,g->inputNum());
+    unsigned comb = std::pow(2,g->inputNum());
 	for( bitset i = 0; i < comb; ++i ) {
         bin(i, g->inputNum());
         std::cout << " -> ";
         bin(g->Process(i), g->outputNum());
 		std::cout << std::endl;
+        if(i > 16) break;
 	}
 	std::cout << std::endl;
 }
@@ -84,6 +86,7 @@ int main() {
     DMUX m_DMUX;
     HA m_HA;
     FA m_FA;
+    OR8WAY m_OR8WAY;
     
     test( &m_NAND );
     test( &m_NOT );
@@ -95,13 +98,17 @@ int main() {
     test( &m_DMUX );
     test( &m_HA );
     test( &m_FA );
-    
+    test( &m_OR8WAY );
+
     testBatch( &m_NAND );
     testBatch( &m_NOT );
     testBatch( &m_AND );
     testBatch( &m_NOR );
     testBatch( &m_OR );
     testBatch( &m_XOR );
+    
+    
+    
     
     return 0;
 
