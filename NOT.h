@@ -22,6 +22,9 @@ public:
         bitset input = (in<<1)|in;
         return m_NAND.Process(input);
     }
+    
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

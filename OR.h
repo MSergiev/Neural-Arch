@@ -20,8 +20,12 @@ public:
 	
     // Processing method
 	virtual inline bitset Process( bitset in ) {
-        return m_NOT.Process( m_NOR.Process(in) );
+        bitset inputNOT = m_NOR.Process(in);
+        return m_NOT.Process( inputNOT );
     }
+    
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
 };
 
 #endif

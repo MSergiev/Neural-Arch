@@ -21,10 +21,17 @@ public:
     // Processing method
 	virtual inline bitset Process( bitset in ) {
         bitset inputAND = 0;
-        add( inputAND, m_NOT.Process(get(in,0)) );
-        add( inputAND, m_NOT.Process(get(in,1)) );
+        
+        for( unsigned char i = 0; i < 2; ++i ) {
+            bitset inputNOT = get(in,i);
+            add( inputAND, m_NOT.Process(inputNOT) );
+        }
+        
         return m_AND.Process( inputAND );
     }
+    
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

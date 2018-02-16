@@ -27,6 +27,9 @@ public:
         add( inputAND, m_OR.Process(in) );
         return m_AND.Process( inputAND );
     }
+    
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

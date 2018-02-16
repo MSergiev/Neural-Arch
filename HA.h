@@ -26,6 +26,9 @@ public:
         add( output, m_AND.Process(in) );
         return output;
     }
+    
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

@@ -32,7 +32,10 @@ public:
 		n.FeedForward();
         return (bitset)std::round(n.GetOutput());
     }
-
+    
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
+    
 };
 
 #endif

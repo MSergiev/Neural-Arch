@@ -22,15 +22,18 @@ public:
     // Processing method
 	virtual inline bitset Process( bitset in ) {
         bitset output = 0;
+        
+        bitset inputAND = 0;
+        add( inputAND, get(in,1) );
+        add( inputAND, m_NOT.Process( get(in,0) ) );
+        add( output, m_AND.Process(inputAND) );
         add( output, m_AND.Process(in) );
         
-        bitset inputAND2 = 0;
-        add( inputAND2, get(in,1) );
-        add( inputAND2, m_NOT.Process( get(in,0) ) );
-        
-        add( output, m_AND.Process( inputAND2 ) );
         return output;
     }
+    
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

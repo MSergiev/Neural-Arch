@@ -65,10 +65,13 @@ public:
     
     // Processing method
     virtual bitset Process( bitset in ) = 0;
+    
+    // Multiway processing method
+    virtual bitset Process( bitset* in ) = 0;
 
 };
 
-// Batchrocessing method
+// Batch processing method
 inline bitset Batch( Gate* g, bitset* in ) {
     
     bitset output = 0;

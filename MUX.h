@@ -2,15 +2,14 @@
 #define MUX_H
 
 #include "NOT.h"
-#include "OR.h"
-#include "AND.h"
+#include "NAND.h"
 
 class MUX : public Gate {
 	
 private:
 	NOT m_NOT;
-	AND m_AND;
-	OR m_OR;
+	NAND m_NAND;
+// 	OR m_OR;
 
 public: 
 
@@ -22,17 +21,24 @@ public:
 
     // Processing method
 	virtual inline bitset Process( bitset in ) {
-        bitset inputAND1 = 0;
-        add( inputAND1, get(in,0) );
-        add( inputAND1, m_NOT.Process(get(in,2)) );
-        bitset inputAND2 = 0;
-        add( inputAND2, get(in,1) );
-        add( inputAND2, get(in,2) );
-        bitset inputOR = 0;
-        add( inputOR, m_AND.Process( inputAND1 ) );
-        add( inputOR, m_AND.Process( inputAND2 ) );
-        return m_OR.Process( inputOR );
+        bitset inputNAND1 = 0;
+        bitset inputNOT = get(in,0);
+        add( inputNAND1, m_NOT.Process(inputNOT) );
+        add( inputNAND1, get(in,2) );
+        
+        bitset inputNAND2 = 0;
+        add( inputNAND2, get(in,0) );
+        add( inputNAND2, get(in,1) );
+        
+        bitset inputNAND3 = 0;
+        add( inputNAND3, m_NAND.Process( inputNAND1 ) );
+        add( inputNAND3, m_NAND.Process( inputNAND2 ) );
+        
+        return m_NAND.Process( inputNAND3 );
     }
+    
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

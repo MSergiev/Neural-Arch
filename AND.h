@@ -21,9 +21,12 @@ public:
 	
     // Processing method
 	virtual inline bitset Process( bitset in ) {
-        return m_NOT.Process( m_NAND.Process(in) );
+        bitset outputNAND = m_NAND.Process(in);
+        return m_NOT.Process( outputNAND );
     }
     
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
 };
 
 #endif

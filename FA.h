@@ -42,6 +42,9 @@ public:
         
         return output;
     }
+    
+    // Multiway processing method
+    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 
