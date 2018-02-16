@@ -10,6 +10,7 @@
 #include "FA.h"
 #include "OR8WAY.h"
 #include "MUX4WAY.h"
+#include "DMUX4WAY.h"
 
 
 void bin( bitset in, unsigned char size ) {
@@ -128,24 +129,9 @@ int main() {
     test( &m_MUX4WAY );
     testBatch( &m_MUX4WAY );
     
-    unsigned char val[10] = 
-    {
-        0b010111,
-        0b100111,
-        0b010111,
-        0b100111,
-        0b010111,
-        0b100111,
-        0b010111,
-        0b100111,
-        0b010111,
-        0b100111
-    };
-    
-    for( int i = 0; i < 10; ++i ) {
-        std::cout << m_MUX4WAY.Process(val[i]);
-    }
-    std::cout << std::endl;
+    DMUX4WAY m_DMUX4WAY;
+    test( &m_DMUX4WAY );
+    testBatch( &m_DMUX4WAY );
     
     return 0;
 
