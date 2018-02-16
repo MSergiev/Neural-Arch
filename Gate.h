@@ -11,6 +11,16 @@ typedef int bitset;
 void add( bitset& in, bool val, unsigned char input = 0 ) { in = (in<<(input+1))|val; }
 bool get( bitset& in, unsigned char idx ) { return (((1<<idx)&in)>>idx); }
 
+void reverse( bitset& in ) {
+    bitset tmp = in;
+    in = 0;
+    for( unsigned char i = 0; i < ARCH; ++i ) {
+        in <<= 1;
+        in |= tmp&1;
+        tmp >>= 1;
+    }
+}
+
 class Gate {
 
 protected:
