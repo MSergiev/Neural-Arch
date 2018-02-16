@@ -11,6 +11,7 @@
 #include "OR8WAY.h"
 #include "MUX4WAY.h"
 #include "DMUX4WAY.h"
+#include "DMUX8WAY.h"
 
 
 void bin( bitset in, unsigned char size ) {
@@ -132,6 +133,10 @@ int main() {
     DMUX4WAY m_DMUX4WAY;
     test( &m_DMUX4WAY );
     testBatch( &m_DMUX4WAY );
+    
+    DMUX8WAY m_DMUX8WAY;
+    test( &m_DMUX8WAY );
+    testBatch( &m_DMUX8WAY );
     
     return 0;
 
