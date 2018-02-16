@@ -10,6 +10,7 @@
 #include "FA.h"
 #include "OR8WAY.h"
 #include "MUX4WAY.h"
+#include "MUX8WAY.h"
 #include "DMUX4WAY.h"
 #include "DMUX8WAY.h"
 
@@ -129,6 +130,10 @@ int main() {
     MUX4WAY m_MUX4WAY;
     test( &m_MUX4WAY );
     testBatch( &m_MUX4WAY );
+    
+    MUX8WAY m_MUX8WAY;
+    test( &m_MUX8WAY );
+    testBatch( &m_MUX8WAY );
     
     DMUX4WAY m_DMUX4WAY;
     test( &m_DMUX4WAY );
