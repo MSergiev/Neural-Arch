@@ -13,6 +13,7 @@
 #include "MUX8WAY.h"
 #include "DMUX4WAY.h"
 #include "DMUX8WAY.h"
+#include "ADDER.h"
 
 
 void bin( bitset in, unsigned char size ) {
@@ -177,6 +178,11 @@ int main() {
     FA m_FA;
     test( &m_FA );
     testBatch( &m_FA );
+    
+    ADDER m_ADDER;
+    test( &m_ADDER );
+    testBatch( &m_ADDER );
+    testParallel( &m_ADDER );
     
     return 0;
 
