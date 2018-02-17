@@ -14,6 +14,7 @@
 #include "DMUX4WAY.h"
 #include "DMUX8WAY.h"
 #include "ADDER.h"
+#include "ALU.h"
 
 
 void bin( bitset in, unsigned char size ) {
@@ -183,6 +184,12 @@ int main() {
     test( &m_ADDER );
     testBatch( &m_ADDER );
     testParallel( &m_ADDER );
+
+    ALU m_ALU;
+    m_ALU.SetControlBits( 0b000000 );
+    bitset inputALU[] = { 0b01010011, 0b10100011 };
+    bin(m_ALU.Process(inputALU), ARCH);
+    
     
     return 0;
 

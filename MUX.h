@@ -44,9 +44,10 @@ public:
         
         for( unsigned char i = 0; i < ARCH; ++i ) {
             bitset input = 0;
-            for( unsigned char j = 0; j < INPUTS; ++j ) {
+            for( unsigned char j = 0; j < INPUTS-1; ++j ) {
                 add( input, get(in[j], ARCH-i-1) );
             }
+			add( input, get(in[INPUTS-1], 0) );
             add( output, Process(input) );
         }
         
