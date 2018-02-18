@@ -72,7 +72,7 @@ public:
 		bitset inputF[] = {outputAND, outputADD, get(control, 1)};
 		bitset output = m_MUX.Process(inputF);
 
-		bitset negOutput = m_NOT.Process(output);
+		bitset negOutput = m_NOT.Process(&output);
 		bitset inputNO[] = {output, negOutput, get(control, 0)};
 		output = m_MUX.Process(inputNO);
 

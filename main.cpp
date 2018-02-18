@@ -91,7 +91,7 @@ void testParallel( Gate* g ) {
     for( unsigned char j = 0; j < g->inputNum(); ++j ) {
         std::cout << g->inputPinout()[j] << " = ";
         bin(input[j], ARCH);
-        std::cout << std::endl;
+        std::cout << " (" << (int)input[j] << ")" << std::endl;
     }
     
     for( unsigned char j = 0; j < ARCH+4; ++j  ) {
@@ -103,7 +103,7 @@ void testParallel( Gate* g ) {
     for( unsigned char j = 0; j < g->outputNum(); ++j ) {
         std::cout << g->outputPinout()[j] << " = ";
         bin(g->Process(input), ARCH); 
-        std::cout << std::endl;
+        std::cout << " (" << (int)g->Process(input) << ")" << std::endl;
     }
     std::cout << std::endl;
     
@@ -186,11 +186,13 @@ int main() {
     testParallel( &m_ADDER );
 
     ALU m_ALU;
-    m_ALU.SetControlBits( 0b000000 );
-    bitset inputALU[] = { 0b01010011, 0b10100011 };
-    bin(m_ALU.Process(inputALU), ARCH);
-    
-    
+    m_ALU.SetControlBits( 0b000010 );	// ZA NA ZB NB F NO
+    test( &m_ALU );
+	testParallel( &m_ALU );
+	std::cout << "Output bits: ";
+	bin( m_ALU.GetOutputBits(), 2 );	// ZO NG
+	std::cout << std::endl;
+
     return 0;
 
 }
