@@ -1,20 +1,20 @@
-#include "NAND.h"
-#include "NOT.h"
-#include "AND.h"
-#include "NOR.h"
-#include "OR.h"
-#include "XOR.h"
-#include "MUX.h"
-#include "DMUX.h"
-#include "HA.h"
-#include "FA.h"
-#include "OR8WAY.h"
-#include "MUX4WAY.h"
-#include "MUX8WAY.h"
-#include "DMUX4WAY.h"
-#include "DMUX8WAY.h"
-#include "ADDER.h"
-#include "ALU.h"
+#include "Basic/NAND.h"
+#include "Basic/NOT.h"
+#include "Basic/AND.h"
+#include "Basic/NOR.h"
+#include "Basic/OR.h"
+#include "Basic/XOR.h"
+#include "Basic/MUX.h"
+#include "Basic/DMUX.h"
+#include "Basic/OR8WAY.h"
+#include "Basic/MUX4WAY.h"
+#include "Basic/MUX8WAY.h"
+#include "Basic/DMUX4WAY.h"
+#include "Basic/DMUX8WAY.h"
+#include "Compound/HA.h"
+#include "Compound/FA.h"
+#include "Compound/ADDER.h"
+#include "Compound/ALU.h"
 
 
 void bin( bitset in, unsigned char size ) {
@@ -84,8 +84,8 @@ void testBatch( Gate* g ) {
 void testParallel( Gate* g ) {
     
     bitset input[3];
-    input[0] = 0b01010011;
-    input[1] = 0b10100110;
+    input[0] = 0b10100110;
+    input[1] = 0b01010011;
     input[2] = 0b00001111;
     
     for( unsigned char j = 0; j < g->inputNum(); ++j ) {
@@ -186,7 +186,7 @@ int main() {
     testParallel( &m_ADDER );
 
     ALU m_ALU;
-    m_ALU.SetControlBits( 0b000010 );	// ZA NA ZB NB F NO
+    m_ALU.SetControlBits( 0b010011 );	// ZA NA ZB NB F NO
     test( &m_ALU );
 	testParallel( &m_ALU );
 	std::cout << "Output bits: ";
