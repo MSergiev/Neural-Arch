@@ -2,7 +2,7 @@
 #define NAND_H
 
 #include "Gate.h"
-#include "../Neuron/Neuron.h"
+#include "../../Neuron/Neuron.h"
 
 static const double WEIGHT = -8.74477;
 static const double BIAS = 13.2027;
