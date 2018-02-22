@@ -5,6 +5,13 @@
 #include "NOT.h"
 
 class OR : public Gate {
+
+public:
+    
+    static const byte A = 0;    // Input A
+    static const byte B = 1;    // Input B
+    
+    static const byte O = 0;    // Output
 	
 private:
 	NOR m_NOR;
@@ -20,8 +27,14 @@ public:
 	
     // Processing method
 	virtual inline IO Process( IO in ) {
-        IO inputNOT = m_NOR.Process(in);
-        return m_NOT.Process( inputNOT );
+        // Perform NOR
+        IO inputNOT = m_NOT.CreateInputIO();
+        inputNOT[NOT::I] = m_NOR.Process(in)[NOR::O];
+        
+        // Negate NOR
+        IO output = CreateOutputIO();
+        output[O] = m_NOT.Process( inputNOT )[NOT::O];
+        return output;
     }
     
 };

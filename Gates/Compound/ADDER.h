@@ -5,6 +5,13 @@
 
 class ADDER : public Gate {
 
+public:
+    
+    static const byte A = 0;    // Input A
+    static const byte B = 1;    // Input B
+    
+    static const byte O = 0;    // Output
+
 private:
 
 	FA m_FA;
@@ -24,20 +31,19 @@ public:
     
     // Multiway processing method
     virtual inline BUS ProcessBUS( BUS in ) override {
+        BUS output = CreateOutputBUS();
+        IO outputADDER = m_FA.CreateOutputIO();
         
-        BUS output = { IO() };
-        
-        IO outputADDER = { 0, 0 };
         for( unsigned char i = 0; i < ARCH; ++i ) {
-            IO input = { outputADDER[1], in[1][ARCH-1-i], in[0][ARCH-1-i] };
-            
+            IO input = m_FA.CreateInputIO();
+            input[FA::A] = outputADDER[FA::C];
+            input[FA::B] = in[B][i];
+            input[FA::CI] = in[A][i];
             outputADDER = m_FA.Process(input);
-            output[0].push_back( outputADDER[0] );
+            output[O][i] = outputADDER[FA::O];
         }
         
-        ReverseIO( output[0] );
         return output; 
-        
     }
 
 };

@@ -4,7 +4,13 @@
 #include "NAND.h"
 
 class NOT : public Gate {
-	
+
+public:
+    
+    static const byte I = 0;    // Input
+    
+    static const byte O = 0;    // Output
+
 private:
 	NAND m_NAND;
 
@@ -19,8 +25,13 @@ public:
 	
     // Processing method
 	virtual inline IO Process( IO in ) {
-        IO input = { in[0], in[0] };
-        return m_NAND.Process(input);
+        IO input = m_NAND.CreateInputIO();
+        input[NAND::A] = in[I];
+        input[NAND::B] = in[I];
+        
+        IO output( OUTPUTS, 0 );
+        output[O] = m_NAND.Process(input)[NAND::O];
+        return output;
     }
     
 };

@@ -13,9 +13,10 @@
 typedef double IOin;
 typedef std::vector<IOin> IO;
 typedef std::vector<IO> BUS;
+typedef unsigned char byte;
 
 
-void Bin( unsigned in, unsigned char size = ARCH ) {
+void Bin( unsigned in, byte size = ARCH ) {
     
 	char str[size+1];
 	memset( str, 0, sizeof(str) );
@@ -85,8 +86,8 @@ protected:
     
     // Gate parameters
     char* ID;
-    const unsigned char INPUTS;
-    const unsigned char OUTPUTS;
+    const byte INPUTS;
+    const byte OUTPUTS;
     char* IN_PINOUT;
     char* OUT_PINOUT;
     
@@ -94,8 +95,8 @@ public:
 
     // Constructor
     Gate( char const *id, 
-          unsigned char inputs, 
-          unsigned char outputs, 
+          byte inputs, 
+          byte outputs, 
           char const *in_pinout, 
           char const *out_pinout ) 
     : INPUTS(inputs),
@@ -120,16 +121,32 @@ public:
 	inline char* GateID() const { return ID; }
 	
 	// Input num
-	inline unsigned char inputNum() const { return INPUTS; }
+	inline byte inputNum() const { return INPUTS; }
 
 	// Output num
-	inline unsigned char outputNum() const { return OUTPUTS; }
+	inline byte outputNum() const { return OUTPUTS; }
 	
 	// Input pinout
 	inline char* inputPinout() const { return IN_PINOUT; }
 	
 	// Output pinout
 	inline char* outputPinout() const { return OUT_PINOUT; }
+	
+    
+    // Create zero IO
+    IO ZeroIO() { return IO(ARCH,0); }
+    
+    // Create input IO instance
+    IO CreateInputIO() { return IO( INPUTS, 0 ); }
+    
+    // Create output IO instance
+    IO CreateOutputIO() { return IO( OUTPUTS, 0 ); }
+    
+    // Create input BUS instance
+    BUS CreateInputBUS() { return BUS( INPUTS, ZeroIO() ); }
+    
+    // Create output BUS instance
+    BUS CreateOutputBUS() { return BUS( OUTPUTS, ZeroIO() ); }
     
     // Processing method
     virtual IO Process( IO in ) = 0;

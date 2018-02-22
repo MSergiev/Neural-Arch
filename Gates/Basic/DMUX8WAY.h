@@ -6,6 +6,22 @@
 
 class DMUX8WAY : public Gate {
 
+public:
+    
+    static const byte I = 0;    // Input
+    static const byte S1 = 1;   // Selection bit 1
+    static const byte S2 = 2;   // Selection bit 2
+    static const byte S3 = 3;   // Selection bit 3
+    
+    static const byte A = 0;    // Output A
+    static const byte B = 1;    // Output B
+    static const byte C = 2;    // Output C
+    static const byte D = 3;    // Output D
+    static const byte E = 4;    // Output E
+    static const byte F = 5;    // Output F
+    static const byte G = 6;    // Output G
+    static const byte H = 7;    // Output H
+
 private:
     
     DMUX m_DMUX;
@@ -21,50 +37,46 @@ public:
 
     // Processing method
     virtual inline IO Process( IO in ) {
-        IO inputDMUX4WAY = { in[0], in[2], in[3] };
-//         add( inputDMUX4WAY, get(in,3) );   // I
-//         add( inputDMUX4WAY, get(in,1) );   // S2
-//         add( inputDMUX4WAY, get(in,0) );   // S1
+        // DMUX4WAY input and S2 and S3
+        IO inputDMUX4WAY = m_DMUX4WAY.CreateInputIO();
+        inputDMUX4WAY[DMUX4WAY::I] = in[I];
+        inputDMUX4WAY[DMUX4WAY::S1] = in[S2];
+        inputDMUX4WAY[DMUX4WAY::S2] = in[S3];
         IO outputDMUX4WAY = m_DMUX4WAY.Process( inputDMUX4WAY );
         
-        IO inputDMUX1 = { outputDMUX4WAY[0], in[1] };
-//         add( inputDMUX1, get(outputDMUX4WAY,0) );  // DMUX1_A
-//         add( inputDMUX1, get(in,2) );   // S2
+        // DMUX DMUX4WAY output A and S1
+        IO inputDMUX1 = m_DMUX.CreateInputIO();
+        inputDMUX1[DMUX::I] = outputDMUX4WAY[DMUX4WAY::A];
+        inputDMUX1[DMUX::S] = in[S1];
         IO outputDMUX1 = m_DMUX.Process( inputDMUX1 );
         
-        IO inputDMUX2 = { outputDMUX4WAY[1], in[1] };
-//         add( inputDMUX2, get(outputDMUX4WAY,1) );  // DMUX1_A
-//         add( inputDMUX2, get(in,2) );   // S2
+        // DMUX DMUX4WAY output B and S1
+        IO inputDMUX2 = m_DMUX.CreateInputIO();
+        inputDMUX2[DMUX::I] = outputDMUX4WAY[DMUX4WAY::B];
+        inputDMUX2[DMUX::S] = in[S1];
         IO outputDMUX2 = m_DMUX.Process( inputDMUX2 );
         
-        IO inputDMUX3 = { outputDMUX4WAY[2], in[1] };
-//         add( inputDMUX3, get(outputDMUX4WAY,2) );  // DMUX1_A
-//         add( inputDMUX3, get(in,2) );   // S2
+        // DMUX DMUX4WAY output C and S1
+        IO inputDMUX3 = m_DMUX.CreateInputIO();
+        inputDMUX3[DMUX::I] = outputDMUX4WAY[DMUX4WAY::C];
+        inputDMUX3[DMUX::S] = in[S1];
         IO outputDMUX3 = m_DMUX.Process( inputDMUX3 );
         
-        IO inputDMUX4 = { outputDMUX4WAY[3], in[1] };
-//         add( inputDMUX4, get(outputDMUX4WAY,3) );  // DMUX1_A
-//         add( inputDMUX4, get(in,2) );   // S2
+        // DMUX DMUX4WAY output D and S1
+        IO inputDMUX4 = m_DMUX.CreateInputIO();
+        inputDMUX4[DMUX::I] = outputDMUX4WAY[DMUX4WAY::D];
+        inputDMUX4[DMUX::S] = in[S1];
         IO outputDMUX4 = m_DMUX.Process( inputDMUX4 );
         
-        IO output = { 
-            outputDMUX1[0], 
-            outputDMUX2[0], 
-            outputDMUX3[0], 
-            outputDMUX4[0], 
-            outputDMUX1[1], 
-            outputDMUX2[1], 
-            outputDMUX3[1], 
-            outputDMUX4[1],  
-        };
-//         add( output, get( outputDMUX4, 1) );
-//         add( output, get( outputDMUX3, 1) );
-//         add( output, get( outputDMUX2, 1) );
-//         add( output, get( outputDMUX1, 1) );
-//         add( output, get( outputDMUX4, 0) );
-//         add( output, get( outputDMUX3, 0) );
-//         add( output, get( outputDMUX2, 0) );
-//         add( output, get( outputDMUX1, 0) );
+        IO output = CreateOutputIO();
+        output[A] = outputDMUX1[0];
+        output[B] = outputDMUX2[0]; 
+        output[C] = outputDMUX3[0]; 
+        output[D] = outputDMUX4[0]; 
+        output[E] = outputDMUX1[1]; 
+        output[F] = outputDMUX2[1]; 
+        output[G] = outputDMUX3[1]; 
+        output[H] = outputDMUX4[1]; 
         return output;
     }
 

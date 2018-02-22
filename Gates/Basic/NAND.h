@@ -7,6 +7,15 @@
 
 class NAND : public Gate {
 
+public:
+    
+    static const byte A = 0;    // Input A
+    static const byte B = 1;    // Input B
+    
+    static const byte O = 0;    // Output
+    
+private:
+    
     static constexpr double WEIGHT = -8.74477;
     static constexpr double BIAS = 13.2027;
 
@@ -28,10 +37,14 @@ public:
 	
     // Processing method
 	virtual inline IO Process( IO in ) {
-        double inputs[] = { in[0], in[1] };
+        // Set neuron inputs
+        double inputs[] = { in[A], in[B] };
 		n.SetInputs( inputs );
 		n.FeedForward();
-        IO output = { n.GetOutput() };
+        
+        IO output = CreateOutputIO();
+        output[O] = n.GetOutput();
+        
         return output;
     }
     

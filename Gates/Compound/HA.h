@@ -5,7 +5,15 @@
 #include "../Basic/AND.h"
 
 class HA : public Gate {
-	
+
+public:
+
+    static const byte A = 0;    // Input A
+    static const byte B = 1;    // Input B
+    
+    static const byte O = 0;    // Output
+    static const byte C = 1;    // Carry
+    
 private:
 
 	XOR m_XOR;
@@ -14,14 +22,16 @@ private:
 public: 
 
 	// Constructor
-	HA() : Gate("HA",2,2,"AB","RC") {}
+	HA() : Gate("HA",2,2,"AB","OC") {}
 
 	// Destuctor
 	~HA() {}
 	
 	// Processing method
 	virtual inline IO Process( IO in ) {
-        IO output = {  m_XOR.Process(in)[0], m_AND.Process(in)[0] };
+        IO output = CreateOutputIO();
+        output[O] = m_XOR.Process(in)[XOR::O];
+        output[C] = m_AND.Process(in)[AND::O];
         return output;
     }
 
