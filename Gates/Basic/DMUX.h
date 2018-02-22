@@ -20,20 +20,12 @@ public:
 	~DMUX() {}
 	
     // Processing method
-	virtual inline bitset Process( bitset in ) {
-        bitset output = 0;
-        
-        bitset inputAND = 0;
-        add( inputAND, get(in,1) );
-        add( inputAND, m_NOT.Process( get(in,0) ) );
-        add( output, m_AND.Process(inputAND) );
-        add( output, m_AND.Process(in) );
-        
+	virtual inline IO Process( IO in ) {        
+        IO inputNOT = { in[1] };
+        IO inputAND = { in[0], m_NOT.Process(inputNOT)[0] };        
+        IO output = { m_AND.Process(inputAND)[0], m_AND.Process(in)[0] };
         return output;
     }
-    
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

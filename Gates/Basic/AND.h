@@ -20,27 +20,11 @@ public:
 	~AND() {}
 	
     // Processing method
-	virtual inline bitset Process( bitset in ) {
-        bitset outputNAND = m_NAND.Process(in);
+	virtual inline IO Process( IO in ) {
+        IO outputNAND = m_NAND.Process(in);
         return m_NOT.Process( outputNAND );
     }
-    
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) {
-        
-        bitset output = 0;
-        
-        for( unsigned char i = 0; i < ARCH; ++i ) {
-            bitset input = 0;
-            for( unsigned char j = 0; j < INPUTS; ++j ) {
-                add( input, get(in[j], ARCH-i-1) );
-            }
-            add( output, Process(input) );
-        }
-        
-        return output; 
-        
-    }
+
 };
 
 #endif

@@ -21,28 +21,11 @@ public:
 	~XOR() {}
 	
     // Processing method
-	virtual inline bitset Process( bitset in ) {
-        bitset inputAND = 0;
-        add( inputAND, m_NAND.Process(in) );
-        add( inputAND, m_OR.Process(in) );
+	virtual inline IO Process( IO in ) {
+        IO inputAND;
+        inputAND.push_back( m_NAND.Process(in)[0] );
+        inputAND.push_back( m_OR.Process(in)[0] );
         return m_AND.Process( inputAND );
-    }
-    
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) {
-        
-        bitset output = 0;
-        
-        for( unsigned char i = 0; i < ARCH; ++i ) {
-            bitset input = 0;
-            for( unsigned char j = 0; j < INPUTS; ++j ) {
-                add( input, get(in[j], ARCH-i-1) );
-            }
-            add( output, Process(input) );
-        }
-        
-        return output; 
-        
     }
 
 };

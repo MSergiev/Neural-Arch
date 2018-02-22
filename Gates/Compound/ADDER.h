@@ -7,7 +7,6 @@ class ADDER : public Gate {
 
 private:
 
-    HA m_HA;
 	FA m_FA;
 
 public: 
@@ -19,28 +18,24 @@ public:
 	~ADDER() {}
 
 	// Processing method
-	virtual inline bitset Process( bitset in ) { 
-        return m_HA.Process(in); 
+	virtual inline IO Process( IO in ) { 
+        return m_FA.Process(in); 
     }
     
     // Multiway processing method
-    virtual inline bitset Process( bitset* in ) {
+    virtual inline BUS ProcessBUS( BUS in ) override {
         
-        bitset output = 0;
+        BUS output = { IO() };
         
-        bitset outputADDER = 0;
+        IO outputADDER = { 0, 0 };
         for( unsigned char i = 0; i < ARCH; ++i ) {
-            bitset input = 0;
-            for( unsigned char j = 0; j < INPUTS; ++j ) {
-                add( input, get(in[j], i) );
-            }
-            add( input, get( outputADDER, 0 ) );
+            IO input = { outputADDER[1], in[1][ARCH-1-i], in[0][ARCH-1-i] };
             
             outputADDER = m_FA.Process(input);
-            
-            add( output, get(outputADDER, 1) );
+            output[0].push_back( outputADDER[0] );
         }
-        reverse(output);
+        
+        ReverseIO( output[0] );
         return output; 
         
     }

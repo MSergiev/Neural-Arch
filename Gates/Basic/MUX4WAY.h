@@ -18,27 +18,12 @@ public:
 	~MUX4WAY() {}
 
     // Processing method
-	virtual inline bitset Process( bitset in ) {
-        bitset inputMUX1 = 0;
-        add( inputMUX1, get(in,5) );
-        add( inputMUX1, get(in,4) );
-        add( inputMUX1, get(in,0) );
-        
-        bitset inputMUX2 = 0;
-        add( inputMUX2, get(in,3) );
-        add( inputMUX2, get(in,2) );
-        add( inputMUX2, get(in,0) );
-        
-        bitset inputMUX3 = 0;
-        add( inputMUX3, m_MUX.Process(inputMUX1) );
-        add( inputMUX3, m_MUX.Process(inputMUX2) );
-        add( inputMUX3, get(in,1) );
-        
+	virtual inline IO Process( IO in ) {
+        IO inputMUX1 = { in[0], in[1], in[4] };
+        IO inputMUX2 = { in[2], in[3], in[4] };
+        IO inputMUX3 = { m_MUX.Process(inputMUX1)[0], m_MUX.Process(inputMUX2)[0], in[5] };
         return m_MUX.Process( inputMUX3 );
     }
-    
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

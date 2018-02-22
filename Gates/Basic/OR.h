@@ -19,27 +19,11 @@ public:
 	~OR() {}
 	
     // Processing method
-	virtual inline bitset Process( bitset in ) {
-        bitset inputNOT = m_NOR.Process(in);
+	virtual inline IO Process( IO in ) {
+        IO inputNOT = m_NOR.Process(in);
         return m_NOT.Process( inputNOT );
     }
     
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) {
-        
-        bitset output = 0;
-        
-        for( unsigned char i = 0; i < ARCH; ++i ) {
-            bitset input = 0;
-            for( unsigned char j = 0; j < INPUTS; ++j ) {
-                add( input, get(in[j], ARCH-i-1) );
-            }
-            add( output, Process(input) );
-        }
-        
-        return output; 
-        
-    }
 };
 
 #endif

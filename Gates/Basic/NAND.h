@@ -4,11 +4,12 @@
 #include "Gate.h"
 #include "../../Neuron/Neuron.h"
 
-static const double WEIGHT = -8.74477;
-static const double BIAS = 13.2027;
 
 class NAND : public Gate {
-	
+
+    static constexpr double WEIGHT = -8.74477;
+    static constexpr double BIAS = 13.2027;
+
 private:
     
 	Neuron n;
@@ -26,28 +27,12 @@ public:
 	~NAND() {}
 	
     // Processing method
-	virtual inline bitset Process( bitset in ) {
-        double inputs[] = { (double)get(in,0), (double)get(in,1) };
+	virtual inline IO Process( IO in ) {
+        double inputs[] = { in[0], in[1] };
 		n.SetInputs( inputs );
 		n.FeedForward();
-        return (bitset)std::round(n.GetOutput());
-    }
-    
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) {
-        
-        bitset output = 0;
-        
-        for( unsigned char i = 0; i < ARCH; ++i ) {
-            bitset input = 0;
-            for( unsigned char j = 0; j < INPUTS; ++j ) {
-                add( input, get(in[j], ARCH-i-1) );
-            }
-            add( output, Process(input) );
-        }
-        
-        return output; 
-        
+        IO output = { n.GetOutput() };
+        return output;
     }
     
 };

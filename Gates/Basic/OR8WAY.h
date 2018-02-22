@@ -18,25 +18,23 @@ public:
     ~OR8WAY() {}
 
     // Processing method
-    virtual inline bitset Process( bitset in ) {
+    virtual inline IO Process( IO in ) {
         
-        bitset output = 0;
+        IO output;
+        output.push_back(0);
         
         for( unsigned char i = 0; i < 8; ++i ) {        
-            bitset inputOR = 0;
+            IO inputOR;
             
-            add( inputOR, get( (i == 0 ? in : output), 0 ) );
-            add( inputOR, get( in, i ) );
+            inputOR.push_back( (i == 0 ? in[0] : output[0]) );
+            inputOR.push_back( in[i] );
             
-            output = m_OR.Process( inputOR );
+            output[0] = m_OR.Process( inputOR )[0];
         }
         
         return output;
         
     }
-    
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

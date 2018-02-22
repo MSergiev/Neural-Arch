@@ -20,15 +20,10 @@ public:
 	~HA() {}
 	
 	// Processing method
-	virtual inline bitset Process( bitset in ) {
-        bitset output = 0;
-        add( output, m_XOR.Process(in) );
-        add( output, m_AND.Process(in) );
+	virtual inline IO Process( IO in ) {
+        IO output = {  m_XOR.Process(in)[0], m_AND.Process(in)[0] };
         return output;
     }
-    
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

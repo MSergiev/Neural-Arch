@@ -20,31 +20,17 @@ public:
 	~FA() {}
 
 	// Processing method
-	virtual inline bitset Process( bitset in ) {
+	virtual inline IO Process( IO in ) {
+        IO inputHA1 = { in[0], in[1] };
+        IO outputHA1 = m_HA.Process( inputHA1 );
         
-        bitset inputHA1 = 0;
-        add( inputHA1, get(in, 2) );    // A
-        add( inputHA1, get(in, 1) );    // B
-        bitset outputHA1 = m_HA.Process( inputHA1 );
+        IO inputHA2 = { outputHA1[0], in[2] };
+        IO outputHA2 = m_HA.Process( inputHA2 );
         
-        bitset inputHA2 = 0;
-        add( inputHA2, get(in, 0) );    // C
-        add( inputHA2, get(outputHA1, 1) ); //HA1_R
-        bitset outputHA2 = m_HA.Process( inputHA2 );
-        
-        bitset inputOR = 0;
-        add( inputOR, get(outputHA1, 0) );  // HA1_C
-        add( inputOR, get(outputHA2, 0) );  // HA2_C
-        
-        bitset output = 0;
-        add( output, get(outputHA2, 1) );   // HA2_R
-        add( output, m_XOR.Process( inputOR ) ); // OR_O
-        
+        IO inputXOR = { outputHA1[1], outputHA2[1] };
+        IO output = { outputHA2[0], m_XOR.Process(inputXOR)[0] };
         return output;
     }
-    
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

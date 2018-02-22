@@ -6,27 +6,31 @@
 #include "../Basic/NOT.h"
 #include "../Basic/AND.h"
 #include "../Basic/OR8WAY.h"
+#include "../Basic/OR.h"
 
 // Control bit positions
-#define ZA 5	// Zero input A
-#define NA 4	// Negate input A
-#define ZB 3	// Zero input B
-#define NB 2	// Negate input B
-#define F  1	// AND/ADD function switch
-#define NO 0	// Negate output
+#define ZA 0	// Zero input A
+#define NA 1	// Negate input A
+#define ZB 2	// Zero input B
+#define NB 3	// Negate input B
+#define F  4	// AND/ADD function switch
+#define NO 5	// Negate output
 
-#define ZO 1	// Output is zero
-#define NG 0	// Output is negative
+#define ZO 0	// Output is zero
+#define NG 1	// Output is negative
+
+// Inputs
+#define IN_A 0 // Input A
+#define IN_B 1 // Input B
+#define IN_CONT 2   // Control bits
+
+// Outputs
+#define OUT 0 // Output
+#define OUT_CONT 1 // Output control bits
 
 class ALU : public Gate {
 
 private:
-
-    // Control bitset (ZA,NA,ZB,NB,F,NO)
-    bitset control;
-    
-    // Output control bitset (ZO,NG)
-    bitset outBits;
 
     // Gates
     ADDER m_ADDER;
@@ -34,64 +38,61 @@ private:
     NOT m_NOT;
     AND m_AND;
     OR8WAY m_OR8WAY;
+    OR m_OR;
 
 public: 
 
     // Constructor
-    ALU() : Gate("ALU",2,1,"AB","O"), control(0) {}
+    ALU() : Gate("ALU",3,2,"ABC","OC") {}
 
     // Destuctor
     ~ALU() {}
 
     // Processing method
-    virtual inline bitset Process( bitset in ) { return in; }
+    virtual inline IO Process( IO in ) { return in; }
     
     // Multiway processing method
-    virtual inline bitset Process( bitset* in ) {
+    virtual inline BUS ProcessBUS( BUS in ) {        
+        IO inputA = in[IN_A];
+		BUS inputZA = { inputA, IO(ARCH,0), IO(ARCH,in[IN_CONT][ZA]) };
+		inputA = m_MUX.ProcessBUS( inputZA )[0];
+		BUS inputNegA = { inputA, {in[IN_CONT][NA]} } ;
+		IO negA = m_NOT.ProcessBUS( inputNegA )[0];
+		BUS inputNA = { inputA, negA, IO(ARCH,in[IN_CONT][NA]) };
+		inputA = m_MUX.ProcessBUS( inputNA )[0];
         
-        bitset inputA = in[0];
-		bitset inputZA[] = {inputA, 0, get(control, ZA)};
-		inputA = m_MUX.Process(inputZA);
-		bitset inputNegA[] = {inputA, get(control, NA)};
-		bitset negA = m_NOT.Process(inputNegA);	
-		bitset inputNA[] = {inputA, negA, get(control, NA)};
-		inputA = m_MUX.Process(inputNA);
+        IO inputB = in[IN_B];
+		BUS inputZB = { inputB, IO(ARCH,0), IO(ARCH,in[IN_CONT][ZB]) };
+		inputB = m_MUX.ProcessBUS( inputZB )[0];
+		BUS inputNegB = { inputB, {in[IN_CONT][NB]} };
+		IO negB = m_NOT.ProcessBUS( inputNegB )[0];
+		BUS inputNB = { inputB, negB, IO(ARCH,in[IN_CONT][NB]) };
+		inputB = m_MUX.ProcessBUS( inputNB )[0];
+
+		BUS inputAND = { inputA, inputB };
+		IO outputAND = m_AND.ProcessBUS( inputAND )[0];
+		BUS inputADD = { inputA, inputB };
+		IO outputADD = m_ADDER.ProcessBUS( inputADD )[0];
+		BUS inputF = { outputAND, outputADD, IO(ARCH,in[IN_CONT][F]) };
+		IO outputOP = m_MUX.ProcessBUS( inputF )[0];
+
+        BUS inputNegO = { outputOP };
+		IO outputNegO = m_NOT.ProcessBUS( inputNegO )[0];
+		BUS inputNO = { outputOP, outputNegO, IO(ARCH,in[IN_CONT][NO]) };
+        IO finalOut = m_MUX.ProcessBUS( inputNO )[0];
+
+        BUS inputOR8 = { IO(), IO() };
+        for( unsigned char i = 0; i < 8; ++i ) {
+            inputOR8[0].push_back( finalOut[i] );
+            inputOR8[1].push_back( finalOut[i+8] );
+        }
+        BUS outputOR8 = { IO(), IO() };
+        outputOR8[0] = m_OR8WAY.Process( inputOR8[0] );
+        outputOR8[1] = m_OR8WAY.Process( inputOR8[1] );
+		IO outBits = { m_NOT.Process( m_OR.ProcessBUS(outputOR8)[0] )[0], finalOut[ARCH-1] };
         
-        bitset inputB = in[1];
-		bitset inputZB[] = {inputB, 0, get(control, ZB)};
-		inputB = m_MUX.Process(inputZB);
-		bitset inputNegB[] = {inputB, get(control, NB)};
-		bitset negB = m_NOT.Process(inputNegB);	
-		bitset inputNB[] = {inputB, negB, get(control, NB)};
-		inputB = m_MUX.Process(inputNB);
-
-		bitset inputAND[] = {inputA, inputB};
-		bitset outputAND = m_AND.Process(inputAND);
-		bitset inputADD[] = {inputA, inputB};
-		bitset outputADD = m_ADDER.Process(inputADD);
-		bitset inputF[] = {outputAND, outputADD, get(control, 1)};
-		bitset output = m_MUX.Process(inputF);
-
-		bitset negOutput = m_NOT.Process(&output);
-		bitset inputNO[] = {output, negOutput, get(control, 0)};
-		output = m_MUX.Process(inputNO);
-
-		outBits = 0;
-		add( outBits, m_NOT.Process( m_OR8WAY.Process(output) ) );
-	    add( outBits, get(output, ARCH-1) );	
-
+		BUS output = { finalOut, outBits };
         return output; 
-        
-    }
-    
-    // Control bitset setter
-    void SetControlBits( bitset in ) {
-        control = in;
-    }
-    
-    // Output control bits getter
-    bitset GetOutputBits() {
-        return outBits;
     }
 
 };

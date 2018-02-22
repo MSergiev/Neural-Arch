@@ -18,32 +18,24 @@ public:
     ~DMUX4WAY() {}
 
     // Processing method
-    virtual inline bitset Process( bitset in ) {
-        bitset inputDMUX1 = 0;
-        add( inputDMUX1, get(in,2) );   // I
-        add( inputDMUX1, get(in,0) );   // S1
-        bitset outputDMUX1 = m_DMUX.Process( inputDMUX1 );
+    virtual inline IO Process( IO in ) {
+        IO inputDMUX1 = { in[0], in[2] };
+        IO outputDMUX1 = m_DMUX.Process( inputDMUX1 );
         
-        bitset inputDMUX2 = 0;
-        add( inputDMUX2, get(outputDMUX1,0) );  // DMUX1_A
-        add( inputDMUX2, get(in,1) );   // S2
-        bitset outputDMUX2 = m_DMUX.Process( inputDMUX2 );
+        IO inputDMUX2 = { outputDMUX1[0], in[1] };
+        IO outputDMUX2 = m_DMUX.Process( inputDMUX2 );
         
-        bitset inputDMUX3 = 0;
-        add( inputDMUX3, get(outputDMUX1,1) );  // DMUX1_B
-        add( inputDMUX3, get(in,1) );   // S2
-        bitset outputDMUX3 = m_DMUX.Process( inputDMUX3 );
+        IO inputDMUX3 = { outputDMUX1[1], in[1] };
+        IO outputDMUX3 = m_DMUX.Process( inputDMUX3 );
         
-        bitset output = 0;
-        add( output, get( outputDMUX3, 1) );
-        add( output, get( outputDMUX2, 1) );
-        add( output, get( outputDMUX3, 0) );
-        add( output, get( outputDMUX2, 0) );
+        IO output = { 
+            outputDMUX2[0], 
+            outputDMUX3[0], 
+            outputDMUX2[1], 
+            outputDMUX3[1],  
+        };
         return output;
     }
-    
-    // Multiway processing method
-    virtual inline bitset Process( bitset* in ) { return 0; }
 
 };
 

@@ -1,25 +1,83 @@
 #ifndef GATE_H
 #define GATE_H
 
+#include <iostream>
 #include <cstring>
+#include <algorithm>
+#include <vector>
+#include <cmath>
 
 // Instruction length
 #define ARCH 16
 
-typedef unsigned short bitset;
+typedef double IOin;
+typedef std::vector<IOin> IO;
+typedef std::vector<IO> BUS;
 
-void add( bitset& in, bool val, unsigned char input = 0 ) { in = (in<<(input+1))|val; }
-bool get( bitset& in, unsigned char idx ) { return (((1<<idx)&in)>>idx); }
 
-void reverse( bitset& in ) {
-    bitset tmp = in;
-    in = 0;
-    for( unsigned char i = 0; i < ARCH; ++i ) {
-        in <<= 1;
-        in |= tmp&1;
-        tmp >>= 1;
-    }
+void Bin( unsigned in, unsigned char size = ARCH ) {
+    
+	char str[size+1];
+	memset( str, 0, sizeof(str) );
+	for( unsigned i = 0; i < size; ++i ) {
+		str[size-i-1] = (in&1) + '0';
+		in >>= 1;
+	}
+	std::cout << str;
+    
 }
+
+IO NumToIO( unsigned num, unsigned size = ARCH ) {
+    
+    IO out;
+    for( unsigned i = 0; i < size; ++i ) {
+        out.push_back( num&1 );
+        num >>= 1;
+    }
+    std::reverse( out.begin(), out.end() );
+    return out;
+    
+}
+
+unsigned IOToNum( IO& in ) {
+    
+    unsigned out = 0;
+    for( unsigned i = 0; i < in.size(); ++i ) {
+        out <<= 1;
+        out |= 1&((unsigned)std::round(in[i]));
+    }
+    return out;
+    
+}
+
+void PrintIO( IO in ) {
+    
+    if( in.size() == 0 ) return; 
+    for( unsigned i = 0; i < in.size(); ++i ) {
+#ifdef ROUND
+            std::cout << std::round(in[i]);
+#else
+            std::cout << in[i] << " ";
+#endif
+    }
+    
+}
+
+void PrintBUS( BUS in, unsigned size = 0 ) {
+    if( size == 0 ) size = in.size();
+    if( in.size() == 0 ) return; 
+    for( unsigned i = 0; i < size; ++i ) {
+        PrintIO( in[i] );
+        std::cout << " (" << IOToNum( in[i] )<<  ")" << std::endl;
+    }
+    
+}
+
+void ReverseIO( IO& in ) {
+    std::reverse( in.begin(), in.end() );
+}
+
+
 
 class Gate {
 
@@ -74,28 +132,26 @@ public:
 	inline char* outputPinout() const { return OUT_PINOUT; }
     
     // Processing method
-    virtual bitset Process( bitset in ) = 0;
+    virtual IO Process( IO in ) = 0;
     
-    // Multiway processing method
-    virtual bitset Process( bitset* in ) = 0;
+    // Parallel processing method
+    virtual inline BUS ProcessBUS( BUS in ) {
+        BUS output(OUTPUTS, IO());
+        
+        for( unsigned i = 0; i < ARCH; ++i ) {
+            IO inputSerial;
+            for( unsigned j = 0; j < INPUTS; ++j ) {
+                inputSerial.push_back( in[j][i] );
+            }
+            IO outputSerial = Process(inputSerial);
+            for( unsigned j = 0; j < OUTPUTS; ++j ) {
+                output[j].push_back( outputSerial[j] );
+            }
+        }
+        
+        return output;
+    }
 
 };
-
-// Batch processing method
-inline bitset Batch( Gate* g, bitset* in ) {
-    
-    bitset output = 0;
-    
-    for( unsigned char i = 0; i < ARCH; ++i ) {
-        bitset input = 0;
-        for( unsigned char j = 0; j < g->inputNum(); ++j ) {
-            add( input, get(in[j], ARCH-i-1) );
-        }
-        add( output, g->Process( input ) );
-    }
-    
-    return output;
-    
-}
 
 #endif
