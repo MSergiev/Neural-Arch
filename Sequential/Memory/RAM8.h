@@ -13,6 +13,10 @@ public:
     static const byte A = 1;    // Address
     static const byte L = 2;    // Load bit
     
+    static const byte A1 = ARCH-1;    // Address bit
+    static const byte A2 = ARCH-2;    // Address bit
+    static const byte A3 = ARCH-3;    // Address bit
+    
     static const byte O = 0;    // Output
     
     static const byte SIZE = 8; //RAM size
@@ -41,9 +45,9 @@ public:
         // DMUX loading bit
         IO inputDMUX = m_DMUX.CreateInputIO();
         inputDMUX[DMUX8WAY::I] = in[L][ARCH-1];
-        inputDMUX[DMUX8WAY::S1] = in[A][ARCH-3];
-        inputDMUX[DMUX8WAY::S2] = in[A][ARCH-2];
-        inputDMUX[DMUX8WAY::S3] = in[A][ARCH-1];
+        inputDMUX[DMUX8WAY::S1] = in[A][A3];
+        inputDMUX[DMUX8WAY::S2] = in[A][A2];
+        inputDMUX[DMUX8WAY::S3] = in[A][A1];
         IO outputDMUX = m_DMUX.Process( inputDMUX );
         
         // Create registry inputs
@@ -51,7 +55,7 @@ public:
         for( byte i = 0; i < SIZE; ++i ) {
             inputREG[i] = m_REG[i].CreateInputBUS();
             inputREG[i][REG::I] = in[I];
-            inputREG[i][REG::L] = FilledIO(outputDMUX[i]);
+            inputREG[i][REG::L] = FilledIO(outputDMUX[i]);            
         }
         
         // MUX registry outputs
@@ -59,9 +63,9 @@ public:
         for( byte i = 0; i < SIZE; ++i ) {
             inputMUX[i] = m_REG[i].ProcessBUS(inputREG[i])[REG::O];
         }
-        inputMUX[MUX8WAY::S1] = FilledIO( in[A][ARCH-1] );
-        inputMUX[MUX8WAY::S2] = FilledIO( in[A][ARCH-2] );
-        inputMUX[MUX8WAY::S3] = FilledIO( in[A][ARCH-3] );
+        inputMUX[MUX8WAY::S1] = FilledIO( in[A][A1] );
+        inputMUX[MUX8WAY::S2] = FilledIO( in[A][A2] );
+        inputMUX[MUX8WAY::S3] = FilledIO( in[A][A3] );
         
         BUS output = CreateOutputBUS();
         output[O] = m_MUX.ProcessBUS( inputMUX )[MUX8WAY::O];

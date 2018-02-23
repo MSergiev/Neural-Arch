@@ -3,53 +3,43 @@
 #include <iostream>
 
 #include "Clock.h"
-#include "Memory/RAM8.h"
+#include "Memory/RAM64.h"
 
 #define LIMIT 100
 
 long cycles = 0;    
 
-RAM8 m_RAM8;
+RAM64 m_RAM64;
 
 void setup() {
     
     Clock::SetSpeed(0);
     
-//     for( byte i = 0; i < 8; ++i ) {
-//         BUS input = m_RAM8.CreateInputBUS();
-//         input[RAM8::I] = NumToIO(0);
-//         input[RAM8::A] = NumToIO(i);
-//         input[RAM8::L] = NumToIO(1);
-// //         PrintBUS(input);
-//         BUS out = m_RAM8.ProcessBUS( input );
-// //         PrintBUS(out);
-// //         std::cout << std::endl;
-//     }
+    for( unsigned i = 0; i < 64; ++i ) {
+        BUS input = m_RAM64.CreateInputBUS();
+        input[RAM64::I] = NumToIO(i);
+        input[RAM64::A] = NumToIO(i);
+        input[RAM64::L] = NumToIO(1);
+        BUS out = m_RAM64.ProcessBUS( input );
+        std::cout << "Loading " << IOToNum(input[RAM64::I]) << " to addr " << IOToNum(input[RAM64::A]) << std::endl;
+    }
     
-    m_RAM8.PrintRAM();
+    m_RAM64.PrintRAM();
 }
 
 
 
 void loop() {
     
-    BUS input = m_RAM8.CreateInputBUS();
-    input[RAM8::I] = NumToIO(cycles);
-    input[RAM8::A] = NumToIO(cycles%8);
-    input[RAM8::L] = NumToIO(cycles%10==0);
-    
-//     { NumToIO(63-cycles), NumToIO(cycles%(RAM8::SIZE)), {(double)(cycles<7)} };
-
-//     if( cycles%100 ) inp = !inp;
+    BUS input = m_RAM64.CreateInputBUS();
+    input[RAM64::I] = NumToIO(cycles);
+    input[RAM64::A] = NumToIO(cycles%64);
+    input[RAM64::L] = NumToIO(/*cycles%10==*/0);
     bool ld = ( cycles%100==0 );
     
-//     BUS in = m_REG.CreateInputBUS();
-//     in[REG::I] = NumToIO(cycles);
-//     in[REG::L] = NumToIO(ld);
-    
     std::cout << cycles << " -> ";
-    PrintBUS( m_RAM8.ProcessBUS(input) );
-    m_RAM8.PrintRAM();
+    PrintBUS( m_RAM64.ProcessBUS(input) );
+//     m_RAM64.PrintRAM();
     
 }
 

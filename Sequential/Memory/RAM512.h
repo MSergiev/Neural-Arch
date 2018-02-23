@@ -1,0 +1,107 @@
+#ifndef RAM512_H
+#define RAM512_H
+
+#include "RAM64.h"
+
+class RAM512 : public Gate {
+
+public:
+    
+    static const byte I = 0;    // Input
+    static const byte A = 1;    // Address
+    static const byte L = 2;    // Load bit
+    
+    static const byte A1 = ARCH-1;    // Address bit
+    static const byte A2 = ARCH-2;    // Address bit
+    static const byte A3 = ARCH-3;    // Address bit    
+    static const byte A4 = ARCH-4;    // Address bit
+    static const byte A5 = ARCH-5;    // Address bit
+    static const byte A6 = ARCH-6;    // Address bit
+    static const byte A7 = ARCH-7;    // Address bit
+    static const byte A8 = ARCH-8;    // Address bit
+    static const byte A9 = ARCH-9;    // Address bit    
+    
+    static const byte O = 0;    // Output
+    
+    static const byte SIZE = 8; //RAM size
+    
+private:
+    
+    DMUX8WAY m_DMUX;
+    RAM64 m_RAM64[SIZE];
+    MUX8WAY m_MUX;
+    
+public: 
+
+    // Constructor
+    RAM512() : Gate("RAM512",3,1,"IAL","O") {}
+
+    // Destuctor
+    ~RAM512() {}
+
+    // Processing method
+    virtual inline IO Process( IO in ) {
+        return in;
+    }
+    
+    // Multiway processing method
+    virtual inline BUS ProcessBUS( BUS in ) {
+        // DMUX loading bit
+        IO inputDMUX = m_DMUX.CreateInputIO();
+        inputDMUX[DMUX8WAY::I] = in[L][ARCH-1];
+        inputDMUX[DMUX8WAY::S1] = in[A][A9];
+        inputDMUX[DMUX8WAY::S2] = in[A][A8];
+        inputDMUX[DMUX8WAY::S3] = in[A][A7];
+        IO outputDMUX = m_DMUX.Process( inputDMUX );
+        
+        // Create RAM64 inputs
+        BUS inputRAM64[SIZE];
+        for( byte i = 0; i < SIZE; ++i ) {
+            inputRAM64[i] = m_RAM64[i].CreateInputBUS();
+            inputRAM64[i][RAM64::I] = in[I];
+            inputRAM64[i][RAM64::L] = FilledIO(outputDMUX[i]);
+            inputRAM64[i][RAM64::A] = ZeroIO();
+            inputRAM64[i][RAM64::A][RAM64::A1] = in[A][A1];
+            inputRAM64[i][RAM64::A][RAM64::A2] = in[A][A2];
+            inputRAM64[i][RAM64::A][RAM64::A3] = in[A][A3];
+            inputRAM64[i][RAM64::A][RAM64::A4] = in[A][A4];
+            inputRAM64[i][RAM64::A][RAM64::A5] = in[A][A5];
+            inputRAM64[i][RAM64::A][RAM64::A6] = in[A][A6];
+        }
+        
+        // MUX registry outputs
+        BUS inputMUX = m_MUX.CreateInputBUS();
+        for( byte i = 0; i < SIZE; ++i ) {
+            inputMUX[i] = m_RAM64[i].ProcessBUS(inputRAM64[i])[RAM64::O];
+        }
+        inputMUX[MUX8WAY::S1] = FilledIO( in[A][A7] );
+        inputMUX[MUX8WAY::S2] = FilledIO( in[A][A8] );
+        inputMUX[MUX8WAY::S3] = FilledIO( in[A][A9] );
+        
+        BUS output = CreateOutputBUS();
+        output[O] = m_MUX.ProcessBUS( inputMUX )[MUX8WAY::O];
+        return output; 
+    }
+    
+    // Dump registry contents
+    inline void PrintRAM() {
+        std::cout << "\n==========================\n";
+        std::cout <<"Registry:\n";
+        for( unsigned i = 0; i < 512; ++i ) {
+            BUS inputRAM64 = m_RAM64[i/SIZE].CreateInputBUS();
+            inputRAM64[RAM64::I] = ZeroIO();
+            inputRAM64[RAM64::A] = NumToIO(i);
+            inputRAM64[RAM64::L] = ZeroIO();
+            IO outputRAM64 = m_RAM64[i/SIZE].ProcessBUS(inputRAM64)[RAM64::O];
+            std::cout << "A: ";
+            Bin(i,9);
+            std::cout << " -> ";
+            PrintIO(outputRAM64);
+            std::cout << " (" << IOToNum(outputRAM64) << ")" << std::endl;
+        }
+        std::cout << "==========================\n";
+    }
+
+};
+
+#endif
