@@ -1,5 +1,7 @@
 #include "TrainableNeuron.h"
 
+#include "../Gates/Basic/DFF.h"
+
 static const unsigned inputs = 2;
 static const unsigned samples = 4;
 
@@ -11,10 +13,10 @@ static double input[samples][inputs] = {
 };
 
 static double target[samples] = {
-	1,
 	0,
 	0,
-	0
+	0,
+	1
 };
 
 static const double learningRate = 0.2;
@@ -32,7 +34,7 @@ int main() {
 			n.SetTarget( target[j] );
 			n.FeedForward();
 			n.Backpropagate();
-
+            
 			if(i == iterations-1) {
 				std::cout << j << " -> " << std::round(n.GetOutput()) << std::endl;
 			}
@@ -43,7 +45,7 @@ int main() {
 	std::cout << "W1 = " << n.weight[1] << std::endl;
 	std::cout << "Bias = " << n.bias << std::endl;
 	std::cout << "Sum = " << n.sum << std::endl;
-
+    
 	return 0;
 
 }

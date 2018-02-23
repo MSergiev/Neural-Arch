@@ -48,12 +48,12 @@ public:
         
         // MUX4WAY inputs E,F,G,H
         IO inputMUX4WAY2 = m_MUX4WAY.CreateInputIO();
-        inputMUX4WAY1[MUX4WAY::A] = in[E];
-        inputMUX4WAY1[MUX4WAY::B] = in[F];
-        inputMUX4WAY1[MUX4WAY::C] = in[G];
-        inputMUX4WAY1[MUX4WAY::D] = in[H];
-        inputMUX4WAY1[MUX4WAY::S1] = in[S1];
-        inputMUX4WAY1[MUX4WAY::S2] = in[S2];
+        inputMUX4WAY2[MUX4WAY::A] = in[E];
+        inputMUX4WAY2[MUX4WAY::B] = in[F];
+        inputMUX4WAY2[MUX4WAY::C] = in[G];
+        inputMUX4WAY2[MUX4WAY::D] = in[H];
+        inputMUX4WAY2[MUX4WAY::S1] = in[S1];
+        inputMUX4WAY2[MUX4WAY::S2] = in[S2];
         
         // MUX previous MUX4WAY outputs
         IO inputMUX = m_MUX.CreateInputIO();
@@ -66,6 +66,24 @@ public:
         return output;
     }
 
+    
+    // Multiway processing method
+    virtual inline BUS ProcessBUS( BUS in ) override {
+        BUS output = { IO() };
+        
+        for( byte i = 0; i < ARCH; ++i ) {
+            IO input = CreateInputIO();
+            for( byte j = 0; j < 8; ++j ) {
+                input[j] = in[j][i];
+            }
+            input[S1] = in[S1][0];
+            input[S2] = in[S2][1];
+            input[S3] = in[S3][2];
+            output[O].push_back( Process(input)[O] );
+        }
+        
+        return output;
+    }
 };
 
 #endif

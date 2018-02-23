@@ -58,7 +58,7 @@ public:
 			dCost_dWeight[i] = dCost_dOutput * dOutput_dSum * dSum_dWeight[i];
 		}
 		double dCost_dBias = dCost_dOutput * dOutput_dSum * dSum_dBias;
-
+        
 		// Modify neuron parameters
 		for( unsigned i = 0; i < inputCount; ++i ) {
 			weight[i] -= learningRate * dCost_dWeight[i];

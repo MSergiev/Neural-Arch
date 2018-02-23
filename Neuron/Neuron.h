@@ -79,6 +79,11 @@ public:
 	inline void SetBias( double bias ) {
 		this->bias = bias;	
 	}
+	
+	// Get neuron bias
+	inline double GetBias() {
+		return bias;
+	}
 
 	// Get neuron output
 	inline double GetOutput() {

@@ -106,7 +106,7 @@ public:
     
 private:
     
-    void ProcessInput( IO& in, double zero, double negate ) {
+    void ProcessInput( IO& in, IOin zero, IOin negate ) {
         BUS inputZero = m_MUX.CreateInputBUS();
         inputZero[MUX::A] = in;
         inputZero[MUX::B] = ZeroIO();

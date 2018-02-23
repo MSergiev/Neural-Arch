@@ -38,15 +38,15 @@ public:
         
         // MUX inputs B and C
         IO inputMUX2 = m_MUX.CreateInputIO();
-        inputMUX1[MUX::A] = in[C];
-        inputMUX1[MUX::B] = in[D];
-        inputMUX1[MUX::S] = in[S1];
+        inputMUX2[MUX::A] = in[C];
+        inputMUX2[MUX::B] = in[D];
+        inputMUX2[MUX::S] = in[S1];
         
         // MUX previout MUX outputs
         IO inputMUX3 = m_MUX.CreateInputIO();
-        inputMUX1[MUX::A] = m_MUX.Process(inputMUX1)[MUX::O];
-        inputMUX1[MUX::B] = m_MUX.Process(inputMUX2)[MUX::O];
-        inputMUX1[MUX::S] = in[S2];
+        inputMUX3[MUX::A] = m_MUX.Process(inputMUX1)[MUX::O];
+        inputMUX3[MUX::B] = m_MUX.Process(inputMUX2)[MUX::O];
+        inputMUX3[MUX::S] = in[S2];
         
         IO output = CreateOutputIO();
         output[O] = m_MUX.Process( inputMUX3 )[MUX::O];

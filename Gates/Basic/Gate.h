@@ -73,7 +73,17 @@ void PrintBUS( BUS in, unsigned size = 0 ) {
     }
     
 }
+    
+// Create filled IO
+inline IO FilledIO( IOin val ) { 
+    return IO(ARCH,val); 
+}
 
+// Create zero IO
+inline IO ZeroIO() { 
+    return FilledIO(0);
+}
+    
 void ReverseIO( IO& in ) {
     std::reverse( in.begin(), in.end() );
 }
@@ -133,36 +143,33 @@ public:
 	inline char* outputPinout() const { return OUT_PINOUT; }
 	
     
-    // Create zero IO
-    IO ZeroIO() { return IO(ARCH,0); }
-    
     // Create input IO instance
-    IO CreateInputIO() { return IO( INPUTS, 0 ); }
+    inline IO CreateInputIO() { return IO( INPUTS, 0 ); }
     
     // Create output IO instance
-    IO CreateOutputIO() { return IO( OUTPUTS, 0 ); }
+    inline IO CreateOutputIO() { return IO( OUTPUTS, 0 ); }
     
     // Create input BUS instance
-    BUS CreateInputBUS() { return BUS( INPUTS, ZeroIO() ); }
+    inline BUS CreateInputBUS() { return BUS( INPUTS, ZeroIO() ); }
     
     // Create output BUS instance
-    BUS CreateOutputBUS() { return BUS( OUTPUTS, ZeroIO() ); }
+    inline BUS CreateOutputBUS() { return BUS( OUTPUTS, ZeroIO() ); }
     
     // Processing method
     virtual IO Process( IO in ) = 0;
     
     // Parallel processing method
     virtual inline BUS ProcessBUS( BUS in ) {
-        BUS output(OUTPUTS, IO());
+        BUS output = CreateOutputBUS();
         
         for( unsigned i = 0; i < ARCH; ++i ) {
-            IO inputSerial;
+            IO inputSerial = CreateInputIO();
             for( unsigned j = 0; j < INPUTS; ++j ) {
-                inputSerial.push_back( in[j][i] );
+                inputSerial[j] = in[j][i];
             }
             IO outputSerial = Process(inputSerial);
             for( unsigned j = 0; j < OUTPUTS; ++j ) {
-                output[j].push_back( outputSerial[j] );
+                output[j][i] = outputSerial[j];
             }
         }
         
