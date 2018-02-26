@@ -24,7 +24,7 @@ public:
 private:
     
     DMUX8WAY m_DMUX;
-    REG m_REG[SIZE];
+    REG m_REG[8];
     MUX8WAY m_MUX;
     
 public: 
@@ -51,19 +51,21 @@ public:
         IO outputDMUX = m_DMUX.Process( inputDMUX );
         
         // Create registry inputs
-        BUS inputREG[SIZE];
-        for( byte i = 0; i < SIZE; ++i ) {
+        BUS inputREG[8];
+        for( byte i = 0; i < 8; ++i ) {
             inputREG[i] = m_REG[i].CreateInputBUS();
             inputREG[i][REG::I] = in[I];
             inputREG[i][REG::L] = FilledIO(outputDMUX[i]);
+#ifdef DEBUG
             if( outputDMUX[i] > 0.5 ) {
-                std::cout << "  RAM8 - Loading " << IOToNum(in[I]) << " to addr " << (int)i << std::endl;
+                std::cout << "RAM8 - Loading " << IOToNum(in[I]) << " to addr " << (int)i << std::endl;
             }
+#endif
         }
         
         // MUX registry outputs
         BUS inputMUX = m_MUX.CreateInputBUS();
-        for( byte i = 0; i < SIZE; ++i ) {
+        for( byte i = 0; i < 8; ++i ) {
             inputMUX[i] = m_REG[i].ProcessBUS(inputREG[i])[REG::O];
         }
         inputMUX[MUX8WAY::S1] = FilledIO( in[A][A1] );

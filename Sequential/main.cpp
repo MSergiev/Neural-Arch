@@ -1,45 +1,46 @@
 #define ROUND
+#define DEBUG
 
 #include <iostream>
 
 #include "Clock.h"
-#include "Memory/RAM512.h"
+#include "Memory/RAM16K.h"
 
 #define LIMIT 100
 
 long cycles = 0;    
 
-RAM512 m_RAM512;
+RAM16K m_RAM16K;
 
 void setup() {
     
     Clock::SetSpeed(0);
     
-    for( unsigned i = 0; i < 512; ++i ) {
-        BUS input = m_RAM512.CreateInputBUS();
-        input[RAM512::I] = NumToIO(i);
-        input[RAM512::A] = NumToIO(i);
-        input[RAM512::L] = NumToIO(1);
-        BUS out = m_RAM512.ProcessBUS( input );
-//         std::cout << "Loading " << IOToNum(input[RAM512::I]) << " to addr " << IOToNum(input[RAM512::A]) << std::endl;
+    for( unsigned i = 0; i < RAM16K::SIZE; ++i ) {
+        BUS input = m_RAM16K.CreateInputBUS();
+        input[RAM16K::I] = NumToIO(i);
+        input[RAM16K::A] = NumToIO(i);
+        input[RAM16K::L] = NumToIO(1);
+        BUS out = m_RAM16K.ProcessBUS( input );
+//         std::cout << "Loading " << IOToNum(input[RAM16K::I]) << " to addr " << IOToNum(input[RAM16K::A]) << std::endl;
     }
     
-    m_RAM512.PrintRAM();
+    m_RAM16K.PrintRAM();
 }
 
 
 
 void loop() {
     
-    BUS input = m_RAM512.CreateInputBUS();
-    input[RAM512::I] = NumToIO(cycles);
-    input[RAM512::A] = NumToIO(cycles%512);
-    input[RAM512::L] = NumToIO(/*cycles%10==*/0);
+    BUS input = m_RAM16K.CreateInputBUS();
+    input[RAM16K::I] = NumToIO(cycles);
+    input[RAM16K::A] = NumToIO(cycles%RAM16K::SIZE);
+    input[RAM16K::L] = NumToIO(/*cycles%10==*/0);
     bool ld = ( cycles%100==0 );
     
     std::cout << cycles << " -> ";
-    PrintBUS( m_RAM512.ProcessBUS(input) );
-//     m_RAM512.PrintRAM();
+    PrintBUS( m_RAM16K.ProcessBUS(input) );
+//     m_RAM16K.PrintRAM();
     
 }
 
