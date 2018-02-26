@@ -4,43 +4,58 @@
 #include <iostream>
 
 #include "Clock.h"
-#include "Memory/RAM16K.h"
+#include "Memory/RAM64.h"
+#include "Memory/PC.h"
 
 #define LIMIT 100
 
 long cycles = 0;    
 
-RAM16K m_RAM16K;
+RAM64 m_RAM64;
+PC m_PC;
 
 void setup() {
     
     Clock::SetSpeed(0);
     
-    for( unsigned i = 0; i < RAM16K::SIZE; ++i ) {
-        BUS input = m_RAM16K.CreateInputBUS();
-        input[RAM16K::I] = NumToIO(i);
-        input[RAM16K::A] = NumToIO(i);
-        input[RAM16K::L] = NumToIO(1);
-        BUS out = m_RAM16K.ProcessBUS( input );
-//         std::cout << "Loading " << IOToNum(input[RAM16K::I]) << " to addr " << IOToNum(input[RAM16K::A]) << std::endl;
+    BUS inputPC = m_PC.CreateInputBUS();
+    inputPC[PC::I] = ZeroIO();
+    inputPC[PC::L] = FilledIO(1);
+    inputPC[PC::N] = ZeroIO();
+    inputPC[PC::R] = NumToIO(cycles==50);
+    m_PC.ProcessBUS( inputPC );
+    
+    for( unsigned i = 0; i < RAM64::SIZE; ++i ) {
+        BUS input = m_RAM64.CreateInputBUS();
+        input[RAM64::I] = NumToIO(i);
+        input[RAM64::A] = NumToIO(i);
+        input[RAM64::L] = NumToIO(1);
+        BUS out = m_RAM64.ProcessBUS( input );
+//         std::cout << "Loading " << IOToNum(input[RAM64::I]) << " to addr " << IOToNum(input[RAM64::A]) << std::endl;
     }
     
-    m_RAM16K.PrintRAM();
+    m_RAM64.PrintRAM();
 }
 
 
 
 void loop() {
     
-    BUS input = m_RAM16K.CreateInputBUS();
-    input[RAM16K::I] = NumToIO(cycles);
-    input[RAM16K::A] = NumToIO(cycles%RAM16K::SIZE);
-    input[RAM16K::L] = NumToIO(/*cycles%10==*/0);
+    BUS input = m_RAM64.CreateInputBUS();
+    input[RAM64::I] = NumToIO(cycles);
+    input[RAM64::A] = NumToIO(cycles%RAM64::SIZE);
+    input[RAM64::L] = NumToIO(/*cycles%10==*/0);
     bool ld = ( cycles%100==0 );
     
-    std::cout << cycles << " -> ";
-    PrintBUS( m_RAM16K.ProcessBUS(input) );
-//     m_RAM16K.PrintRAM();
+    BUS inputPC = m_PC.CreateInputBUS();
+    inputPC[PC::I] = ZeroIO();
+    inputPC[PC::L] = ZeroIO();
+    inputPC[PC::N] = FilledIO(cycles%10==0);
+    inputPC[PC::R] = FilledIO(cycles==50);
+    
+    std::cout << IOToNum(m_PC.ProcessBUS(inputPC)[PC::O]) << " -> ";
+    PrintBUS( m_RAM64.ProcessBUS(input) );
+//     m_RAM64.PrintRAM();
     
 }
 
