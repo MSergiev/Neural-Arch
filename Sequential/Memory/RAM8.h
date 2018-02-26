@@ -55,7 +55,10 @@ public:
         for( byte i = 0; i < SIZE; ++i ) {
             inputREG[i] = m_REG[i].CreateInputBUS();
             inputREG[i][REG::I] = in[I];
-            inputREG[i][REG::L] = FilledIO(outputDMUX[i]);            
+            inputREG[i][REG::L] = FilledIO(outputDMUX[i]);
+            if( outputDMUX[i] > 0.5 ) {
+                std::cout << "  RAM8 - Loading " << IOToNum(in[I]) << " to addr " << (int)i << std::endl;
+            }
         }
         
         // MUX registry outputs
@@ -77,15 +80,16 @@ public:
         std::cout << "\n==========================\n";
         std::cout <<"Registry:\n";
         for( byte i = 0; i < SIZE; ++i ) {
-            BUS inputREG = m_REG[i].CreateInputBUS();
-            inputREG[REG::I] = ZeroIO();
-            inputREG[REG::L] = ZeroIO();
-            IO outputREG = m_REG[i].ProcessBUS(inputREG)[REG::O];
+            BUS input = CreateInputBUS();
+            input[I] = ZeroIO();
+            input[A] = NumToIO(i);
+            input[L] = ZeroIO();
+            IO output = ProcessBUS(input)[O];
             std::cout << "A: ";
             Bin(i,3);
             std::cout << " -> ";
-            PrintIO(outputREG);
-            std::cout << " (" << IOToNum(outputREG) << ")" << std::endl;
+            PrintIO(output);
+            std::cout << " (" << IOToNum(output) << ")" << std::endl;
         }
         std::cout << "==========================\n";
     }

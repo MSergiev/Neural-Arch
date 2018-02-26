@@ -61,6 +61,13 @@ public:
             inputRAM8[i][RAM8::A][RAM8::A1] = in[A][A1];
             inputRAM8[i][RAM8::A][RAM8::A2] = in[A][A2];
             inputRAM8[i][RAM8::A][RAM8::A3] = in[A][A3];
+            if( outputDMUX[i] > 0.5 ) {
+                IO ad = ZeroIO();
+                ad[A1] = in[A][A4];
+                ad[A2] = in[A][A5];
+                ad[A3] = in[A][A6];
+                std::cout << " RAM64 - Loading " << IOToNum(in[I]) << " to addr " << IOToNum(ad) << std::endl;
+            }
         }
         
         // MUX registry outputs
@@ -82,16 +89,16 @@ public:
         std::cout << "\n==========================\n";
         std::cout <<"Registry:\n";
         for( byte i = 0; i < 64; ++i ) {
-            BUS inputRAM8 = m_RAM8[i/SIZE].CreateInputBUS();
-            inputRAM8[RAM8::I] = ZeroIO();
-            inputRAM8[RAM8::A] = NumToIO(i);
-            inputRAM8[RAM8::L] = ZeroIO();
-            IO outputRAM8 = m_RAM8[i/SIZE].ProcessBUS(inputRAM8)[RAM8::O];
+            BUS input = CreateInputBUS();
+            input[I] = ZeroIO();
+            input[A] = NumToIO(i);
+            input[L] = ZeroIO();
+            IO output = ProcessBUS(input)[O];
             std::cout << "A: ";
             Bin(i,6);
             std::cout << " -> ";
-            PrintIO(outputRAM8);
-            std::cout << " (" << IOToNum(outputRAM8) << ")" << std::endl;
+            PrintIO(output);
+            std::cout << " (" << IOToNum(output) << ")" << std::endl;
         }
         std::cout << "==========================\n";
     }

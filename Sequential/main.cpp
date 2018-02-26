@@ -3,43 +3,43 @@
 #include <iostream>
 
 #include "Clock.h"
-#include "Memory/RAM64.h"
+#include "Memory/RAM512.h"
 
 #define LIMIT 100
 
 long cycles = 0;    
 
-RAM64 m_RAM64;
+RAM512 m_RAM512;
 
 void setup() {
     
     Clock::SetSpeed(0);
     
-    for( unsigned i = 0; i < 64; ++i ) {
-        BUS input = m_RAM64.CreateInputBUS();
-        input[RAM64::I] = NumToIO(i);
-        input[RAM64::A] = NumToIO(i);
-        input[RAM64::L] = NumToIO(1);
-        BUS out = m_RAM64.ProcessBUS( input );
-        std::cout << "Loading " << IOToNum(input[RAM64::I]) << " to addr " << IOToNum(input[RAM64::A]) << std::endl;
+    for( unsigned i = 0; i < 512; ++i ) {
+        BUS input = m_RAM512.CreateInputBUS();
+        input[RAM512::I] = NumToIO(i);
+        input[RAM512::A] = NumToIO(i);
+        input[RAM512::L] = NumToIO(1);
+        BUS out = m_RAM512.ProcessBUS( input );
+//         std::cout << "Loading " << IOToNum(input[RAM512::I]) << " to addr " << IOToNum(input[RAM512::A]) << std::endl;
     }
     
-    m_RAM64.PrintRAM();
+    m_RAM512.PrintRAM();
 }
 
 
 
 void loop() {
     
-    BUS input = m_RAM64.CreateInputBUS();
-    input[RAM64::I] = NumToIO(cycles);
-    input[RAM64::A] = NumToIO(cycles%64);
-    input[RAM64::L] = NumToIO(/*cycles%10==*/0);
+    BUS input = m_RAM512.CreateInputBUS();
+    input[RAM512::I] = NumToIO(cycles);
+    input[RAM512::A] = NumToIO(cycles%512);
+    input[RAM512::L] = NumToIO(/*cycles%10==*/0);
     bool ld = ( cycles%100==0 );
     
     std::cout << cycles << " -> ";
-    PrintBUS( m_RAM64.ProcessBUS(input) );
-//     m_RAM64.PrintRAM();
+    PrintBUS( m_RAM512.ProcessBUS(input) );
+//     m_RAM512.PrintRAM();
     
 }
 
