@@ -50,7 +50,7 @@ void loop() {
     BUS inputPC = m_PC.CreateInputBUS();
     inputPC[PC::I] = ZeroIO();
     inputPC[PC::L] = ZeroIO();
-    inputPC[PC::N] = FilledIO(cycles%10==0);
+    inputPC[PC::N] = FilledIO(cycles%1==0);
     inputPC[PC::R] = FilledIO(cycles==50);
     
     std::cout << IOToNum(m_PC.ProcessBUS(inputPC)[PC::O]) << " -> ";

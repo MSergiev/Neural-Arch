@@ -35,7 +35,7 @@ IO NumToIO( unsigned num, unsigned size = ARCH ) {
         out.push_back( num&1 );
         num >>= 1;
     }
-    std::reverse( out.begin(), out.end() );
+//     std::reverse( out.begin(), out.end() );
     return out;
     
 }
@@ -44,8 +44,7 @@ unsigned IOToNum( IO& in ) {
     
     unsigned out = 0;
     for( unsigned i = 0; i < in.size(); ++i ) {
-        out <<= 1;
-        out |= 1&((unsigned)std::round(in[i]));
+        out |= ((unsigned)std::round(in[i])<<i);
     }
     return out;
     
@@ -83,12 +82,16 @@ inline IO FilledIO( IOin val ) {
 inline IO ZeroIO() { 
     return FilledIO(0);
 }
-    
+
+// Reverse IO
 void ReverseIO( IO& in ) {
     std::reverse( in.begin(), in.end() );
 }
 
-
+// Create subvector from IO
+IO SubIO( IO& in, byte from, byte len ) {
+    return IO( &in[from], &in[from+len] );
+}
 
 class Gate {
 
@@ -154,6 +157,26 @@ public:
     
     // Create output BUS instance
     inline BUS CreateOutputBUS() { return BUS( OUTPUTS, ZeroIO() ); }
+    
+    // Print input bus
+    inline void PrintInputBUS( BUS in ) {
+        if( in.size() == 0 ) return; 
+        for( unsigned i = 0; i < in.size(); ++i ) {
+            std::cout << IN_PINOUT[i] << ": ";
+            PrintIO( in[i] );
+            std::cout << " (" << IOToNum( in[i] )<<  ")" << std::endl;
+        }
+    }    
+    
+    // Print output bus
+    inline void PrintOutputBUS( BUS in ) {
+        if( in.size() == 0 ) return; 
+        for( unsigned i = 0; i < in.size(); ++i ) {
+            std::cout << OUT_PINOUT[i] << ": ";
+            PrintIO( in[i] );
+            std::cout << " (" << IOToNum( in[i] )<<  ")" << std::endl;
+        }
+    }
     
     // Processing method
     virtual IO Process( IO in ) = 0;

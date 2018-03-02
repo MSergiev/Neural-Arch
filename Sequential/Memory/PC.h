@@ -55,7 +55,7 @@ public:
         // Increment value
         BUS inputADD = m_ADDER.CreateInputBUS();
         inputADD[ADDER::A] = in[I];
-        inputADD[ADDER::B] = NumToIO(in[N][ARCH-1]);
+        inputADD[ADDER::B] = NumToIO(in[N][0]);
         in[I] = m_ADDER.ProcessBUS( inputADD )[ADDER::O];
         
         // Zero input
@@ -66,11 +66,11 @@ public:
         
         // Determine registry writing
         IO inputOR = m_OR.CreateInputIO();
-        inputOR[OR::A] = in[L][ARCH-1];
-        inputOR[OR::B] = in[R][ARCH-1];
+        inputOR[OR::A] = in[L][0];
+        inputOR[OR::B] = in[R][0];
         IO outputOR = m_OR.Process( inputOR );
-        inputOR[OR::A] = outputOR[0];
-        inputOR[OR::B] = in[N][ARCH-1];
+        inputOR[OR::A] = outputOR[OR::O];
+        inputOR[OR::B] = in[N][0];
         outputOR = m_OR.Process( inputOR );
         
         // Registry manipulation

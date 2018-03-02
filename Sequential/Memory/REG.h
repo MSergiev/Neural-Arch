@@ -36,7 +36,7 @@ public:
         for( byte i = 0; i < ARCH; ++i ) {
             IO input = (*m_BIT).CreateInputIO();
             input[BIT::I] = in[I][i];
-            input[BIT::L] = in[L][ARCH-1];
+            input[BIT::L] = in[L][0];
             output[O][i] = m_BIT[i].Process(input)[BIT::O];
         }
         

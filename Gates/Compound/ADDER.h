@@ -36,14 +36,13 @@ public:
         
         for( unsigned char i = 0; i < ARCH; ++i ) {
             IO input = m_FA.CreateInputIO();
-            input[FA::A] = in[A][ARCH-1-i];
-            input[FA::B] = in[B][ARCH-1-i];
+            input[FA::A] = in[A][i];
+            input[FA::B] = in[B][i];
             input[FA::CI] = outputADDER[FA::C];
             outputADDER = m_FA.Process(input);
             output[O][i] = outputADDER[FA::O];
         }
         
-        ReverseIO( output[O] );
         return output; 
     }
 

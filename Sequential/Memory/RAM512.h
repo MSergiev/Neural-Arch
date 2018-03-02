@@ -11,15 +11,15 @@ public:
     static const byte A = 1;    // Address
     static const byte L = 2;    // Load bit
     
-    static const byte A1 = ARCH-1;    // Address bit
-    static const byte A2 = ARCH-2;    // Address bit
-    static const byte A3 = ARCH-3;    // Address bit    
-    static const byte A4 = ARCH-4;    // Address bit
-    static const byte A5 = ARCH-5;    // Address bit
-    static const byte A6 = ARCH-6;    // Address bit
-    static const byte A7 = ARCH-7;    // Address bit
-    static const byte A8 = ARCH-8;    // Address bit
-    static const byte A9 = ARCH-9;    // Address bit    
+    static const byte A1 = 0;    // Address bit
+    static const byte A2 = 1;    // Address bit
+    static const byte A3 = 2;    // Address bit    
+    static const byte A4 = 3;    // Address bit
+    static const byte A5 = 4;    // Address bit
+    static const byte A6 = 5;    // Address bit
+    static const byte A7 = 6;    // Address bit
+    static const byte A8 = 7;    // Address bit
+    static const byte A9 = 8;    // Address bit    
     
     static const byte O = 0;    // Output
     
@@ -48,7 +48,7 @@ public:
     virtual inline BUS ProcessBUS( BUS in ) {
         // DMUX loading bit
         IO inputDMUX = m_DMUX.CreateInputIO();
-        inputDMUX[DMUX8WAY::I] = in[L][ARCH-1];
+        inputDMUX[DMUX8WAY::I] = in[L][0];
         inputDMUX[DMUX8WAY::S1] = in[A][A9];
         inputDMUX[DMUX8WAY::S2] = in[A][A8];
         inputDMUX[DMUX8WAY::S3] = in[A][A7];

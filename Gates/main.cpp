@@ -128,32 +128,6 @@ int main() {
     test( &m_ALU );
     testParallel( &m_ALU );
     
-    
-//     BUS alu = { NumToIO(5), NumToIO(4), {1,1,1,1,0,0} };
-//     PrintBUS( m_ALU.ProcessBUS( alu ) );
-//     m_ALU.SetControlBits( 0b010011 );	// ZA NA ZB NB F NO
-// 	std::cout << "Output bits: ";
-// 	bin( m_ALU.GetOutputBits(), 2 );	// ZO NG
-// 	std::cout << std::endl;
-    
-//     //       A B S
-//     IO in = {1,0,0};
-//     PrintIO( m_MUX.Process( in ) );
-//     std::cout << std::endl;
-//     
-//     //    A B C D S S
-//     in = {0,1,0,0,1,0};
-//     PrintIO( m_MUX4WAY.Process( in ) );
-//     std::cout << std::endl;
-//     
-//     //    A B C D E F G H S S S
-//     in = {1,0,0,0,0,0,0,0,0,0,0};
-//     PrintIO( m_MUX8WAY.Process( in ) );
-//     std::cout << std::endl;
-// 
-//     BUS bin = { { NumToIO(2) }, { NumToIO(18) } };
-//     PrintBUS( m_ADDER.Process( bin ));
-    
     return 0;
 
 }

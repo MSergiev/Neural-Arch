@@ -27,6 +27,7 @@ public:
     DFF() : Gate("DFF",2,1,"IL","O"), n(0) {
         n.SetBias( BIAS );
         n.SetLearningRate( RATE );
+        n.SetActivation( STEP );
     }
 
     // Destuctor

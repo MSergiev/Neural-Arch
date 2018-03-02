@@ -13,9 +13,9 @@ public:
     static const byte A = 1;    // Address
     static const byte L = 2;    // Load bit
     
-    static const byte A1 = ARCH-1;    // Address bit
-    static const byte A2 = ARCH-2;    // Address bit
-    static const byte A3 = ARCH-3;    // Address bit
+    static const byte A1 = 0;    // Address bit
+    static const byte A2 = 1;    // Address bit
+    static const byte A3 = 2;    // Address bit
     
     static const byte O = 0;    // Output
     
@@ -44,7 +44,7 @@ public:
     virtual inline BUS ProcessBUS( BUS in ) {
         // DMUX loading bit
         IO inputDMUX = m_DMUX.CreateInputIO();
-        inputDMUX[DMUX8WAY::I] = in[L][ARCH-1];
+        inputDMUX[DMUX8WAY::I] = in[L][0];
         inputDMUX[DMUX8WAY::S1] = in[A][A3];
         inputDMUX[DMUX8WAY::S2] = in[A][A2];
         inputDMUX[DMUX8WAY::S3] = in[A][A1];

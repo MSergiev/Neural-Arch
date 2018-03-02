@@ -12,9 +12,6 @@ class ALU : public Gate {
 
 public:
     
-    static const byte ZO = 0;   // Output is zero
-    static const byte NG = 1;   // Output is negative
-    
     static const byte A = 0;    // Input A
     static const byte B = 1;    // Input B
     static const byte CI = 2;   // Control bit input
@@ -23,13 +20,15 @@ public:
     static const byte C = 1;    // Control bit output
     
     // Control bits
-    
     static const byte ZA = 0;   // Zero A
     static const byte NA = 1;   // Negate A
     static const byte ZB = 2;   // Zero B
     static const byte NB = 3;   // Negate B
     static const byte FS = 4;   // AND/ADD selector
     static const byte NO = 5;   // Negate output
+    
+    static const byte ZO = 0;   // Output is zero
+    static const byte NG = 1;   // Output is negative
 
 private:
 
@@ -96,7 +95,9 @@ public:
         BUS outputOR8 = { IO(), IO() };
         outputOR8[0] = m_OR8WAY.Process( inputOR8[0] );
         outputOR8[1] = m_OR8WAY.Process( inputOR8[1] );
-		IO outBits = { m_NOT.Process( m_OR.ProcessBUS(outputOR8)[OR::O] )[NOT::O], finalOut[ARCH-1] };
+		IO outBits(2, 0);
+        outBits[ZO] = m_NOT.Process( m_OR.ProcessBUS(outputOR8)[OR::O] )[NOT::O];
+        outBits[NG] = finalOut[0];
         
 		BUS output = CreateOutputBUS();
         output[O] = finalOut;
