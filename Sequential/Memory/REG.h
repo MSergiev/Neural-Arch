@@ -34,10 +34,15 @@ public:
         BUS output = CreateOutputBUS();
         
         for( byte i = 0; i < ARCH; ++i ) {
-            IO input = (*m_BIT).CreateInputIO();
+            IO input = m_BIT[i].CreateInputIO();
             input[BIT::I] = in[I][i];
             input[BIT::L] = in[L][0];
             output[O][i] = m_BIT[i].Process(input)[BIT::O];
+// #ifdef DEBUG
+//             if( in[L][0] > 0.5 ) {
+//                 std::cout << "REG - Loading " << in[I][i] << " to addr " << (int)i << std::endl;
+//             }
+// #endif
         }
         
         return output; 

@@ -71,7 +71,6 @@ public:
     virtual inline BUS ProcessBUS( BUS in ) {
 #ifdef DEBUG
         std::cout << "==================================" << std::endl;
-        std::cout << "In:" << std::endl;
         PrintInputBUS(in);
         std::cout << std::endl;
 #endif
@@ -85,10 +84,8 @@ public:
         BUS outputMUX = m_MUX.ProcessBUS( inputMUX );
         
 #ifdef DEBUG
-        std::cout << "MUX In:" << std::endl;
         m_MUX.PrintInputBUS(inputMUX);
         std::cout << std::endl;
-        std::cout << "MUX Out:" << std::endl;
         m_MUX.PrintOutputBUS(outputMUX);
         std::cout << std::endl;
 #endif
@@ -100,10 +97,8 @@ public:
         BUS outputADDR = m_ADDR.ProcessBUS( inputADDR );
         
 #ifdef DEBUG
-        std::cout << "ADDR In:" << std::endl;
         m_ADDR.PrintInputBUS(inputADDR);
-        std::cout << std::endl;        
-        std::cout << "ADDR Out:" << std::endl;
+        std::cout << std::endl;
         m_ADDR.PrintOutputBUS(outputADDR);
         std::cout << std::endl;
 #endif
@@ -114,10 +109,8 @@ public:
         outputMUX = m_MUX.ProcessBUS( inputMUX );
         
 #ifdef DEBUG
-        std::cout << "MUX In:" << std::endl;
         m_MUX.PrintInputBUS(inputMUX);
         std::cout << std::endl;
-        std::cout << "MUX Out:" << std::endl;
         m_MUX.PrintOutputBUS(outputMUX);
         std::cout << std::endl;
 #endif
@@ -135,10 +128,8 @@ public:
         m_ALUOut = outputALU[ALU::O];
         
 #ifdef DEBUG
-        std::cout << "ALU In:" << std::endl;
         m_ALU.PrintInputBUS(inputALU);
-        std::cout << std::endl;        
-        std::cout << "ALU Out:" << std::endl;
+        std::cout << std::endl;
         m_ALU.PrintOutputBUS(outputALU);
         std::cout << std::endl;
 #endif
@@ -149,10 +140,8 @@ public:
         outputDATA = m_DATA.ProcessBUS( inputDATA );
         
 #ifdef DEBUG
-        std::cout << "DATA In:" << std::endl;
         m_DATA.PrintInputBUS(inputDATA);
-        std::cout << std::endl;        
-        std::cout << "DATA Out:" << std::endl;
+        std::cout << std::endl;
         m_DATA.PrintOutputBUS(outputDATA);
         std::cout << std::endl;
 #endif
@@ -183,10 +172,8 @@ public:
         BUS outputPC = m_PC.ProcessBUS( inputPC );
         
 #ifdef DEBUG
-        std::cout << "PC In:" << std::endl;
         m_PC.PrintInputBUS(inputPC);
         std::cout << std::endl;
-        std::cout << "PC Out:" << std::endl;
         m_PC.PrintOutputBUS(outputPC);
         std::cout << std::endl;
 #endif
@@ -198,7 +185,6 @@ public:
         output[P] = outputPC[PC::O];
         
 #ifdef DEBUG
-        std::cout << "Output:" << std::endl;
         PrintOutputBUS(output);
         std::cout << std::endl;
         std::cout << "==================================" << std::endl;

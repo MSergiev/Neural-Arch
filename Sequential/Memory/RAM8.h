@@ -58,7 +58,7 @@ public:
             inputREG[i][REG::L] = FilledIO(outputDMUX[i]);
 #ifdef DEBUG
             if( outputDMUX[i] > 0.5 ) {
-                std::cout << "RAM8 - Loading " << IOToNum(in[I]) << " to addr " << (int)i << std::endl;
+                std::cout << "RAM8 - Loading " << IOToNum(in[I]) << " to addr " << (int)i << std::endl << std::endl;
             }
 #endif
         }

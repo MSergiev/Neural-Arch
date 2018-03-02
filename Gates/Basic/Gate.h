@@ -161,6 +161,7 @@ public:
     // Print input bus
     inline void PrintInputBUS( BUS in ) {
         if( in.size() == 0 ) return; 
+        std::cout << ID << " Input: " << std::endl;
         for( unsigned i = 0; i < in.size(); ++i ) {
             std::cout << IN_PINOUT[i] << ": ";
             PrintIO( in[i] );
@@ -171,6 +172,7 @@ public:
     // Print output bus
     inline void PrintOutputBUS( BUS in ) {
         if( in.size() == 0 ) return; 
+        std::cout << ID << " Output: " << std::endl;
         for( unsigned i = 0; i < in.size(); ++i ) {
             std::cout << OUT_PINOUT[i] << ": ";
             PrintIO( in[i] );
