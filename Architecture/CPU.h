@@ -26,7 +26,8 @@ public:
     
     // Instruction composition
     static const byte OPC = 0,      OPC_LEN = 1;    // Opcode
-    static const byte UNUSED = 1,   UNUSED_LEN = 2; // Unused bits
+    static const byte HALT = 1,     HALT_LEN = 1;   // System halt bit
+    static const byte UNUSED = 2,   UNUSED_LEN = 1; // Unused bits
     static const byte MEM = 3,      MEM_LEN = 1;    // Input/Reg selector
     static const byte CONT = 4,     CONT_LEN = 6;   // Control bits
     static const byte DEST = 10,    DEST_LEN = 3;   // Destination
@@ -37,6 +38,8 @@ public:
     static const byte J_N = 13,     J_N_LEN = 1;   // Negative jump
     static const byte J_Z = 14,     J_Z_LEN = 1;   // Zero jump
     static const byte J_P = 15,     J_P_LEN = 1;   // Positive jump
+    
+    bool halt;  // System halt flag
     
 private:
     
@@ -55,7 +58,7 @@ private:
 public: 
 
     // Constructor
-    CPU() : Gate("CPU",3,4,"IMR","OLAP") {
+    CPU() : Gate("CPU",3,4,"IMR","OLAP"), halt(false) {
         m_ALUOut = ZeroIO();
     }
 
@@ -73,13 +76,19 @@ public:
         std::cout << "==================================" << std::endl;
         PrintInputBUS(in);
         std::cout << std::endl;
+        decompose( in[I] );
+        if( halt ) {
+            std::cout << "CPU halted" << std::endl;
+            std::cout << std::endl;
+            std::cout << "==================================" << std::endl;
+            return BUS();
+        }
 #endif
+        halt = ( in[I][OPC] > 0.5 and in[I][HALT] > 0.5 );
         
         BUS inputMUX = m_MUX.CreateInputBUS();
-        IO val = SubIO( in[I], 1, ARCH-1 );
-        val.push_back(0);
         inputMUX[MUX::A] = m_ALUOut;
-        inputMUX[MUX::B] = val;
+        inputMUX[MUX::B] = SubIO( in[I], 1, ARCH );
         inputMUX[MUX::S] = FilledIO(m_NOT.Process( FilledIO(in[I][OPC]) )[NOT::O]);
         BUS outputMUX = m_MUX.ProcessBUS( inputMUX );
         
@@ -97,8 +106,10 @@ public:
         BUS outputADDR = m_ADDR.ProcessBUS( inputADDR );
         
 #ifdef DEBUG
+        std::cout << "ADDR ";
         m_ADDR.PrintInputBUS(inputADDR);
         std::cout << std::endl;
+        std::cout << "ADDR ";
         m_ADDR.PrintOutputBUS(outputADDR);
         std::cout << std::endl;
 #endif
@@ -140,8 +151,10 @@ public:
         outputDATA = m_DATA.ProcessBUS( inputDATA );
         
 #ifdef DEBUG
+        std::cout << "DATA ";
         m_DATA.PrintInputBUS(inputDATA);
         std::cout << std::endl;
+        std::cout << "DATA ";
         m_DATA.PrintOutputBUS(outputDATA);
         std::cout << std::endl;
 #endif
@@ -191,7 +204,87 @@ public:
 #endif
         return output; 
     }
+    
+    // Instruction decomposer
+    void decompose( IO inst ) {
+        
+        if( inst[OPC] <= 0.5 ) {
+            // A instruction
+            std::cout << "A INST" << std::endl;
+            std::cout << "VAL: ";
+//             ReverseIO( inst );
+//             inst.pop_back();
+//             ReverseIO( inst );
+            inst = SubIO( inst, 1, ARCH );
+            PrintIO( inst );
+            std::cout << " (" << IOToNum( inst ) << ")" << std::endl;
+            std::cout << std::endl;
+        }
+        // C instruction
+        else {
+            std::cout << "C INST" << std::endl;
+            std::cout << "LD: " << (inst[MEM] ? "RAM" : "ADDR") << std::endl;
+            PrintOperation( inst );
+            PrintDest( inst );
+            PrintJump( inst );
+            std::cout << std::endl;
+        }
+        
+    }
 
+    // Print operation
+    void PrintOperation( IO in ) {
+        std::cout << "OP: ";
+        in = SubIO( in, CONT, CONT_LEN );
+        ReverseIO( in );
+        switch( IOToNum( in ) ) {
+            case 0b101010: std::cout << (in[MEM] ? "" : "0") << std::endl;      break;
+            case 0b111111: std::cout << (in[MEM] ? "" : "1") << std::endl;      break;
+            case 0b111010: std::cout << (in[MEM] ? "" : "-1") << std::endl;     break;
+            case 0b001100: std::cout << (in[MEM] ? "" : "D") << std::endl;      break;
+            case 0b110000: std::cout << (in[MEM] ? "M" : "A") << std::endl;     break;
+            case 0b001101: std::cout << (in[MEM] ? "" : "!D") << std::endl;     break;
+            case 0b110001: std::cout << (in[MEM] ? "!M" : "!A") << std::endl;   break;
+            case 0b001111: std::cout << (in[MEM] ? "" : "-D") << std::endl;     break;
+            case 0b110011: std::cout << (in[MEM] ? "-M" : "-A") << std::endl;   break;
+            case 0b011111: std::cout << (in[MEM] ? "" : "D+1") << std::endl;    break;
+            case 0b110111: std::cout << (in[MEM] ? "M+1" : "A+1") << std::endl; break;
+            case 0b001110: std::cout << (in[MEM] ? "" : "D-1") << std::endl;    break;
+            case 0b110010: std::cout << (in[MEM] ? "M-1" : "A-1") << std::endl; break;
+            case 0b000010: std::cout << (in[MEM] ? "D+M" : "D+A") << std::endl; break;
+            case 0b010011: std::cout << (in[MEM] ? "D-M" : "D-A") << std::endl; break;
+            case 0b000111: std::cout << (in[MEM] ? "M-D" : "A-D") << std::endl; break;
+            case 0b000000: std::cout << (in[MEM] ? "D&M" : "D&A") << std::endl; break;
+            case 0b010101: std::cout << (in[MEM] ? "D|M" : "D|A") << std::endl; break;
+        }
+    }
+    
+    // Print destination
+    void PrintDest( IO in ) {
+        std::cout << "DEST: ";
+        if( in[D_ADDR] ) std::cout << "ADDR ";
+        if( in[D_DATA] ) std::cout << "DATA ";
+        if( in[D_OUT] ) std::cout << "OUT ";
+        std::cout << std::endl;
+    }
+    
+    // Print jump condition
+    void PrintJump( IO in ) {
+        std::cout << "JUMP: ";
+        in = SubIO( in, JUMP, JUMP_LEN );
+        ReverseIO( in );
+        switch( IOToNum( in ) ) {
+            case 0b000: std::cout << "NULL" << std::endl;      break;
+            case 0b001: std::cout << "OUT > 0" << std::endl;      break;
+            case 0b010: std::cout << "OUT == 0" << std::endl;     break;
+            case 0b011: std::cout << "OUT >= 0" << std::endl;      break;
+            case 0b100: std::cout << "OUT < 0" << std::endl;     break;
+            case 0b101: std::cout << "OUT != 0" << std::endl;     break;
+            case 0b110: std::cout << "OUT <= 0" << std::endl;     break;
+            case 0b111: std::cout << "*" << std::endl;     break;
+        }
+    }
+    
 };
 
 #endif

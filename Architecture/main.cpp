@@ -47,9 +47,16 @@ void loop() {
 
 
 
-int main() {
+int main( int argc, const char* argv[] ) {
     
     setup();
+    
+    if( argc < 2 ) {
+        if( !m_PC.LoadFile( "ROM.txt" ) ) return -1;
+    }
+    else {
+        if( !m_PC.LoadFile( argv[1] ) ) return -1;
+    }
 
 	while( cycles < LIMIT ) {
 		Clock::Tick();

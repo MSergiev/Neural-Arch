@@ -105,6 +105,18 @@ public:
         return output; 
     }
     
+    // Print control bits
+    void PrintCBits( IO& in ) {
+        std::cout << "ALU control bits: ";
+        if( in[ZA] ) std::cout << "ZA ";
+        if( in[NA] ) std::cout << "NA ";
+        if( in[ZB] ) std::cout << "ZB ";
+        if( in[NB] ) std::cout << "NB ";
+        if( in[FS] ) std::cout << "FS ";
+        if( in[NO] ) std::cout << "NO ";
+        std::cout << std::endl;
+    }
+    
 private:
     
     void ProcessInput( IO& in, IOin zero, IOin negate ) {

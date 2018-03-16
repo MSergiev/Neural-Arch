@@ -62,7 +62,11 @@ public:
         return outputCPU; 
         
     }
-
+    
+    // Load program file
+    inline bool LoadFile( const char* filename ) {
+        return m_ROM.LoadFile( filename );
+    }
 };
 
 #endif

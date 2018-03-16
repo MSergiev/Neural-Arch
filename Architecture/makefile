@@ -1,2 +1,2 @@
-test: main.cpp 
-	g++ -o test main.cpp 
+run: *.h *.cpp
+	g++ -o run main.cpp

@@ -1,2 +1,2 @@
-test: main.cpp 
-	g++ -o test main.cpp 
+test: Memory/*.h *.h *.cpp
+	g++ -o test main.cpp

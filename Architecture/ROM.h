@@ -14,7 +14,7 @@ public:
     
     static const byte O = 0;    // Address output
     
-    const char FILENAME[10];   // Program filename
+    char FILENAME[256];   // Program filename
     
 private:
     
@@ -23,9 +23,7 @@ private:
 public: 
 
     // Constructor
-    ROM() : Gate("ROM",1,1,"I","O"), FILENAME( "ROM.txt" ) {
-        LoadROM();
-    }
+    ROM( ) : Gate("ROM",1,1,"I","O"), FILENAME( "ROM.txt" ) {}
 
     // Destuctor
     ~ROM() {}
@@ -44,15 +42,23 @@ public:
         return m_ROM.ProcessBUS( input ); 
     }
 
+    // Load program file
+    inline bool LoadFile( const char* filename ) {
+        std::cout << "Loading file " << filename << " into ROM" << std::endl;
+        memset( FILENAME, 0, 256 );
+        memcpy( FILENAME, filename, strlen(filename) );
+        return LoadROM();
+    }
+    
 private:
     
     // Load program file into ROM 
-    inline void LoadROM() {
+    inline bool LoadROM() {
         
         std::ifstream file( FILENAME );
         if( !file ){
             std::cerr << "ERROR: " << FILENAME << " does not exist!" << std::endl;
-            return;
+            return false;
         }
         
         unsigned addr = 0;
@@ -71,7 +77,7 @@ private:
                 if( line[i] != '0' and line[i] != '1' ) {
                     std::cout << "Parser error at line " << (int)i << std::endl;
                     std::cout << "Erroneous symbol: " << line[i] << " (" << (int)line[i] << ")" << std::endl;
-                    return;
+                    return false;
                 }
                 inputROM[RAM64::I][i] = (line[i] - '0');
             }
@@ -84,6 +90,7 @@ private:
             file.getline( line, sizeof(line) );
         }
         std::cout << FILENAME << " loaded" << std::endl;
+        return true;
     }
 };
 
