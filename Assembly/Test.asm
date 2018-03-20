@@ -1,7 +1,12 @@
-LD 23
+/* A
+// B
+// C */
+
+
 LD asd // Comment
-LD sds
-LD 23
+
+(LOOP)
 INC A               //LongCommentLongCommentLongCommentLongComment
 ADD D, A
-SUB D, M ; JGE
+LD LOOP
+0;JMP

@@ -43,7 +43,9 @@ class PARSER {
     static const unsigned char CJMP = 3;
     
     // Current line number
+    static unsigned instNum;
     static unsigned lineNum;
+    static bool multiComment;
     
     
 public: 
@@ -58,7 +60,9 @@ public:
     inline static void parse( const char* inFilename, const char* outFilename ) {
         
         varTable.clear();
-        lineNum = 0;
+        instNum = 0;
+        lineNum = 1;
+        multiComment = false;
         
         std::ifstream inFile( inFilename );
         std::ofstream outFile( outFilename );
@@ -72,21 +76,25 @@ public:
         
         
         while(1) {
-//             std::cout << "Line: [" << line << "]" << std::endl;
+            std::cout << "Line: [" << line << "]" << std::endl;
             trim( line );
-//             std::cout << "Trimmed: [" << line << "]" << std::endl;
+            std::cout << "Trimmed: [" << line << "]" << std::endl;
             
-            if( line[0] == 0 ) break;
-            
-            // A instruction
-            if( SUBSTR( line, 2) == "LD" ) {
-                if( !ParseAInst( outFile, line ) ) return;
+            if( line[0] != 0 ) {
+                // Label
+                if( !ParseLabel( line ) ) {
+                    // A instruction
+                    if( SUBSTR( line, 2) == "LD" ) {
+                        if( !ParseAInst( outFile, line ) ) return;
+                    }
+                    // C instruction
+                    else {
+                        if( !ParseCInst( outFile, line ) ) return;
+                    }
+                    outFile << '\n';
+                    instNum++;
+                }
             }
-            // C instruction
-            else {
-                if( !ParseCInst( outFile, line ) ) return;
-            }
-            outFile << '\n';
             
             if( inFile.eof() ) break;
             inFile.getline( line, sizeof(line) );
@@ -149,7 +157,7 @@ private:    // Parsers
             file << 1;
             WriteBinVal( file, mopTable.at(opr), COPR );
         } else {
-            std::cerr << " Line " << lineNum << ": Invalid operation" << std::endl;
+            std::cerr << "Line " << lineNum << ": Invalid operation" << std::endl;
             return false;
         }
         
@@ -166,12 +174,37 @@ private:    // Parsers
             if( jmpTable.find( &line[idx+1] ) != jmpTable.end() ) {
                 WriteBinVal( file, jmpTable.at( &line[idx+1] ), CJMP );
             } else {
-                std::cerr << " Line " << lineNum << ": Invalid jump condition" << std::endl;
+                std::cerr << "Line " << lineNum << ": Invalid jump condition" << std::endl;
                 return false;
             }
         } else {
             WriteBinVal( file, 0, CJMP );
         }
+        
+        return true;
+        
+    }
+    
+    // Parse label
+    inline static bool ParseLabel( char* line ) {
+        
+        if( line[0] != '(' ) return false;
+        unsigned idx = 1;
+        while( line[idx] != ')') {
+            if( line[idx] == 0 ) {
+                std::cerr << "Line " << lineNum << ": Unfinished label, missing ) " << std::endl;
+                break;
+            }
+            idx++;
+        }
+        
+        std::string label = SUBSTR( &line[1], idx );
+        
+        if( varTable.find( label ) != varTable.end() ) {
+            std::cerr << "Line " << lineNum << ": Duplicate label definition" << std::endl;
+        }
+        
+        varTable[label] = instNum+1;
         
         return true;
         
@@ -206,8 +239,26 @@ private:    // Parsers
             // End of line
             if( line[i] == '\n' or line[i] == 0 ) break;
             
+            if( multiComment ) {
+                if( line[i] == '*' and line[i+1] == '/' ) {
+                    multiComment = false;
+                    i++;
+                }
+                continue;
+            }
+            
             // Comment
-            if( line[i] == '/' and line[i+1] == '/') break;
+            if( line[i] == '/') {
+                if( line[i+1] == '/') break;
+                else if( line[i+1] == '*') {
+                    multiComment = true;
+                    continue;
+                }
+                else {
+                    std::cerr << "Line " << lineNum << ": Unknown symbol " << line[i] << std::endl;
+                    return;
+                }
+            }
             
             // Blank symbold
             if( line[i] != ' ' and line[i] != '\t' ) {
@@ -276,8 +327,10 @@ private:    // Convertors
 
 
 
-unsigned PARSER::lastAddr = 16;
+unsigned PARSER::lastAddr = 0;
+unsigned PARSER::instNum = 0;
 unsigned PARSER::lineNum = 0;
+bool PARSER::multiComment = false;
 Table PARSER::varTable;
 
 const Table PARSER::regTable = {
@@ -361,6 +414,7 @@ const Table PARSER::regTable = {
 // };
 
 const Table PARSER::opTable = {
+    { "0",      0b000000 },
     { "FAL",    0b010101 },
     { "TRU",    0b111111 },
     { "NGO",    0b010111 },
@@ -382,6 +436,7 @@ const Table PARSER::opTable = {
 };
 
 const Table PARSER::mopTable = {
+    { "0",      0b000000 },
     { "IDDM",   0b000011 },
     { "INVM",   0b100011 },
     { "NEGM",   0b110011 },
@@ -395,6 +450,7 @@ const Table PARSER::mopTable = {
 };
 
 const Table PARSER::dstTable = {
+    { "0",   0b000 },
     { "M",   0b100 },
     { "D",   0b010 },
     { "MD",  0b110 },
@@ -405,6 +461,7 @@ const Table PARSER::dstTable = {
 };
 
 const Table PARSER::jmpTable = {
+    { "0",   0b000 },
     { "JGT", 0b100 },
     { "JEQ", 0b010 },
     { "JGE", 0b110 },

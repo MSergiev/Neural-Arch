@@ -81,7 +81,7 @@ public:
             std::cout << "CPU halted" << std::endl;
             std::cout << std::endl;
             std::cout << "==================================" << std::endl;
-            return BUS();
+            return CreateOutputBUS();
         }
 #endif
         halt = ( in[I][OPC] > 0.5 and in[I][HALT] > 0.5 );
@@ -179,8 +179,8 @@ public:
         
         BUS inputPC = m_PC.CreateInputBUS();
         inputPC[PC::I] = outputADDR[REG::O];
-        inputPC[PC::L] = FilledIO(outputPJUMP[AND::O]);
-        inputPC[PC::N] = FilledIO(1);
+        inputPC[PC::L] = FilledIO( outputPJUMP[AND::O] );
+        inputPC[PC::N] = FilledIO( 1/*m_NOT.Process( outputPJUMP )[NOT::O]*/ );
         inputPC[PC::R] = in[R];
         BUS outputPC = m_PC.ProcessBUS( inputPC );
         

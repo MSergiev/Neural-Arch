@@ -64,6 +64,8 @@ int main( int argc, const char* argv[] ) {
 		if( Clock::GetCycles() > cycles ) {
 			cycles = Clock::GetCycles();   
             loop();
+            
+            if( !m_PC.IsActive() ) return 0;
 		}
 		
 	}

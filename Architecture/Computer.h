@@ -67,6 +67,11 @@ public:
     inline bool LoadFile( const char* filename ) {
         return m_ROM.LoadFile( filename );
     }
+    
+    // Get active status
+    inline bool IsActive() {
+        return !m_CPU.halt;
+    }
 };
 
 #endif
